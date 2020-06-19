@@ -6,3 +6,7 @@ Just run setup in root directory in cmd
 ```
     Setup
 ```
+# Usage
+    run
+# For Frontend
+Visit ``` /bansaz/frontend/templates/src ``` to work in frontend side

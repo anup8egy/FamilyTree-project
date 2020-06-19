@@ -4,3 +4,4 @@ activate
 pip install django
 cd "bansaz\frontend\templates"
 npm install
+cd "..\..\.."
