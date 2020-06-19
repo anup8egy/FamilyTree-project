@@ -3,4 +3,6 @@
     Node (10.16 recommended)
 # Setup
 Just run setup in root directory in cmd
-```setup```
+```
+    setup
+```
