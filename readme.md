@@ -9,6 +9,8 @@ Just run setup in root directory in cmd
 # Usage
     run
 To update ui 
-```     ui ```
+```    
+    ui 
+```
 # For Frontend
 Visit ``` /bansaz/frontend/templates/src ``` to work in frontend side
