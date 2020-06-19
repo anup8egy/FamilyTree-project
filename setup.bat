@@ -1,6 +1,6 @@
 pip install virtualenv
 virtualenv projenv
-activate
+call activate.bat
 pip install django
 cd "bansaz\frontend\templates"
 npm install
