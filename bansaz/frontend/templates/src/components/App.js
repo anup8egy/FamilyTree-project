@@ -4,6 +4,7 @@ import React from 'react';
 
 
 // StyleSheets
+import "../styles/app.css"
 
 class App extends React.Component {
     constructor(props){
@@ -14,7 +15,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <h1> Hello From react</h1>
+                <h1> Hello From React Bitches Yeahhhhh </h1>
             </div>
         )
     }

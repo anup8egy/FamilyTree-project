@@ -1,1 +1,3 @@
-"bansaz\frontend\templates\ui.bat"
+ cd "bansaz\frontend\templates"
+ call npm run build
+ cd "..\..\.."
