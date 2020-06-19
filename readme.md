@@ -4,5 +4,5 @@
 # Setup
 Just run setup in root directory in cmd
 ```
-    setup
+    Setup
 ```
