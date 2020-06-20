@@ -1,10 +1,9 @@
 from django.shortcuts import render
-from django.views import View
+from django.views import View, generic
 
 # Create your views here.
 
 
-class FrontEndView(View):
-    def get(self, request):
-        return render(request, "index.html")
+class FrontEndView(generic.TemplateView):
+    template_name = "index.html"
 
