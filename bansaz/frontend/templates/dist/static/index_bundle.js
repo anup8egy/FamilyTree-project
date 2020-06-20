@@ -5222,14 +5222,14 @@ eval("__webpack_require__.r(__webpack_exports__);\nfunction toVal(mix) {\n  var 
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js?!./src/styles/navBar.css":
-/*!*******************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js??ref--6-1!./src/styles/navBar.css ***!
-  \*******************************************************************************/
+/***/ "./node_modules/css-loader/dist/cjs.js!./src/styles/navBar.css":
+/*!*********************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./src/styles/navBar.css ***!
+  \*********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("// Imports\nvar ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ \"./node_modules/css-loader/dist/runtime/api.js\");\nexports = ___CSS_LOADER_API_IMPORT___(false);\n// Module\nexports.push([module.i, \"._1TyrWG62jbKS61NxSm6C7M {\\r\\n  height: 50px;\\r\\n  width: 100vw;\\r\\n  display: flex;\\r\\n  align-items: center;\\r\\n  justify-content: space-between;\\r\\n}\\r\\n._1aWb7vaqi5HZWWvAINxPJB {\\r\\n  list-style: none;\\r\\n  display: flex;\\r\\n}\\r\\n\", \"\"]);\n// Exports\nexports.locals = {\n\t\"navBar\": \"_1TyrWG62jbKS61NxSm6C7M\",\n\t\"items\": \"_1aWb7vaqi5HZWWvAINxPJB\"\n};\nmodule.exports = exports;\n\n\n//# sourceURL=webpack:///./src/styles/navBar.css?./node_modules/css-loader/dist/cjs.js??ref--6-1");
+eval("// Imports\nvar ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ \"./node_modules/css-loader/dist/runtime/api.js\");\nexports = ___CSS_LOADER_API_IMPORT___(false);\n// Module\nexports.push([module.i, \".navBar {\\r\\n  height: 50px;\\r\\n  width: 100vw;\\r\\n  display: flex;\\r\\n  align-items: center;\\r\\n  justify-content: space-between;\\r\\n}\\r\\n.items {\\r\\n  list-style: none;\\r\\n  display: flex;\\r\\n}\\r\\n\", \"\"]);\n// Exports\nmodule.exports = exports;\n\n\n//# sourceURL=webpack:///./src/styles/navBar.css?./node_modules/css-loader/dist/cjs.js");
 
 /***/ }),
 
@@ -5944,7 +5944,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var reac
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var api = __webpack_require__(/*! ../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ \"./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js\");\n            var content = __webpack_require__(/*! !../../node_modules/css-loader/dist/cjs.js??ref--6-1!./navBar.css */ \"./node_modules/css-loader/dist/cjs.js?!./src/styles/navBar.css\");\n\n            content = content.__esModule ? content.default : content;\n\n            if (typeof content === 'string') {\n              content = [[module.i, content, '']];\n            }\n\nvar options = {};\n\noptions.insert = \"head\";\noptions.singleton = false;\n\nvar update = api(content, options);\n\n\n\nmodule.exports = content.locals || {};\n\n//# sourceURL=webpack:///./src/styles/navBar.css?");
+eval("var api = __webpack_require__(/*! ../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ \"./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js\");\n            var content = __webpack_require__(/*! !../../node_modules/css-loader/dist/cjs.js!./navBar.css */ \"./node_modules/css-loader/dist/cjs.js!./src/styles/navBar.css\");\n\n            content = content.__esModule ? content.default : content;\n\n            if (typeof content === 'string') {\n              content = [[module.i, content, '']];\n            }\n\nvar options = {};\n\noptions.insert = \"head\";\noptions.singleton = false;\n\nvar update = api(content, options);\n\n\n\nmodule.exports = content.locals || {};\n\n//# sourceURL=webpack:///./src/styles/navBar.css?");
 
 /***/ })
 
