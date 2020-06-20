@@ -8,7 +8,7 @@ export default class Navbar extends Component {
         <Avatar>Logo</Avatar>
         <div className="items">
           <ul>
-            <li>Aout</li>
+            <li>About You</li>
             <li>Home</li>
             <li>Whereer</li>
           </ul>
