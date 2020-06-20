@@ -18,7 +18,8 @@ from django.urls import path, include, re_path
 from frontend import views
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    re_path(r"^admin/", admin.site.urls),
+    re_path(r"^api", include("api.urls")),
 ]
 urlpatterns += [
     re_path(r"(?P<path>.*)", views.FrontEndView.as_view()),
