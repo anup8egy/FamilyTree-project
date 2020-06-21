@@ -1,16 +1,15 @@
 import React, { Component } from "react";
-import { Avatar } from "@material-ui/core";
-import "../styles/navBar.css";
-export default class Navbar extends Component {
+export default class NavBar extends Component {
   render() {
     return (
-      <section className="navBar">
-        <Avatar>Logo</Avatar>
-        <div className="items">
+      <section className="nav">
+        <div className="logo"></div>
+        <div className="navItems">
           <ul>
-            <li>About You</li>
             <li>Home</li>
-            <li>Whereer</li>
+            <li>About</li>
+            <li>Pout</li>
+            <li>Route</li>
           </ul>
         </div>
       </section>

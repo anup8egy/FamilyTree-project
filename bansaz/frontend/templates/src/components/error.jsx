@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-export default class Error extends Component {
+class Error extends Component {
   render() {
-    return <div>Page not Found</div>;
+    return <h1>Error! Page not Found</h1>;
   }
 }
+
+export default Error;

@@ -1,22 +1,20 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Link, Route } from "react-router-dom";
+import NavBar from "./components/Navbar";
 import LandingPage from "./components/landingPage";
-import Error from "./components/error";
-import Navbar from "./components/navBar";
-// import "./fonts/fonts.css";
-export default class App extends Component {
+import ErrorPage from "./components/error";
+class App extends Component {
   render() {
     return (
       <React.Fragment>
-        <Navbar />
+        <NavBar />
         <Router>
           <Switch>
-            <Route exact path="/">
+            <Route path="/" exact>
               <LandingPage />
             </Route>
             <Route path="*">
-         
-              <Error />
+              <ErrorPage />
             </Route>
           </Switch>
         </Router>
@@ -24,3 +22,5 @@ export default class App extends Component {
     );
   }
 }
+
+export default App;
