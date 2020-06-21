@@ -15,6 +15,7 @@ export default class App extends Component {
               <LandingPage />
             </Route>
             <Route path="*">
+         
               <Error />
             </Route>
           </Switch>
