@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.http import HttpResponse
+from django.contrib.auth import authenticate
 
 # Create your views here.
 from rest_framework import viewsets, status
@@ -29,6 +30,22 @@ class UserCreate(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UsernameLogin(APIView):
+    def post(self, request, format="json"):
+        print(request.data)
+        if "username" in request.data:
+            get_object_or_404(User, username=request.data["username"])
+            request.session["username"] = request.data["username"]
+        elif "email" in request.data:
+            get_object_or_404(User, email=request.data["email"])
+            request.session["email"] = request.data["email"]
+        else:
+            return Response(
+                {"error": "Provide username/email "}, status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(status=status.HTTP_200_OK)
+
+
 def index(req):
     return HttpResponse("<h1> Hello World from Django</h1>")
 
@@ -37,5 +54,27 @@ def new(req):
     return HttpResponse("ok works")
 
 
-class UserViewSets(viewsets.ReadOnlyModelViewSet):
-    pass
+class PasswordLogin(APIView):
+    def post(self, request, format="json"):
+        if (not (request.session["username"] or request.session["email"])) or (
+            not "password" in request.data
+        ):
+            return Response(
+                {"error": "Provide Username/Email and Password"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            username = get_object_or_404(User, email=request.session["email"])
+        except KeyError:
+            username = request.session["username"]
+
+        user = authenticate(username=username, password=request.data.get("password"))
+
+        if not user:
+            return Response(
+                {"error": "Credentials Not Found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        token, created = Token.objects.get_or_create(user=user)
+
+        return Response({"token": token.key}, status=status.HTTP_200_OK)
