@@ -1,6 +1,0 @@
-var createFontFamily = require('ttf-loader/lib/create-font-family');
-
-module.exports = createFontFamily({
-  ttf: export default __webpack_public_path__ + "./font/ad0aac5095509cc4d1153b1d7ef860a4.ttf",
-  woff: export default __webpack_public_path__ + "./font/bed8a77d126ea5bcdb2a87761c9d0fe0.woff",
-});
