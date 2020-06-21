@@ -1,9 +1,13 @@
+body {
+  background-color: black;
+}
 .navBar {
   height: 50px;
   width: 100vw;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: black;
 }
 .items {
   list-style: none;
