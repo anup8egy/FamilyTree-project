@@ -13,3 +13,16 @@ body {
   list-style: none;
   display: flex;
 }
+.content {
+  min-height: 500px;
+  width: 100vw;
+  background: url("../pics/blob.svg");
+  font-family: Jost;
+  display: grid;
+  grid-template: auto / 2fr 1fr;
+  color: white;
+}
+.header {
+  min-height: 50px;
+  font-size: 3em;
+}

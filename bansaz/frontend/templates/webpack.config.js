@@ -2,16 +2,14 @@ const path = require("path");
 const HtmlWebpack = require("html-webpack-plugin");
 
 module.exports = {
-  entry:[
-    "./src/index.js",
-  ],
+  entry: ["./src/index.js"],
   output: {
     path: path.join(__dirname, "/dist"),
     filename: "static/index_bundle.js",
   },
-  watch :  true,
-  watchOptions : {
-    ignored : /node_modules/
+  watch: true,
+  watchOptions: {
+    ignored: /node_modules/,
   },
   resolve: { extensions: [".js", ".jsx"] },
   module: {
