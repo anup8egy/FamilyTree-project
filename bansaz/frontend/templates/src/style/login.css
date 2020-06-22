@@ -1,0 +1,68 @@
+.login {
+  min-height: 90vh;
+  width: 100vw;
+  position: relative;
+}
+.animated {
+  position: absolute;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+.loginForm {
+  height: 600px;
+  width: 400px;
+  margin: auto;
+  border-radius: 0px 0px 40px 10px;
+  background-color: #404040e6;
+  position: relative;
+  box-sizing: border-box;
+  top: 100px;
+}
+.Avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.controlBar {
+  justify-self: end;
+  bottom: 30px;
+  position: relative;
+}
+.controlBar button {
+  margin-right: 10px;
+}
+.accountOptions {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.9em;
+}
+.accountOptions a {
+  margin-top: 10px;
+}
+.accountOptions a:hover {
+  color: #a9a2a2;
+}
+.swipeItem {
+  display: grid;
+  grid-template: auto / 1fr;
+  justify-items: center;
+  height: 100%;
+  width: 100%;
+}
+.loginForm > div,
+.loginForm > div > div {
+  height: 100%;
+}
+.remember {
+  min-width: 250px;
+  bottom: 30px;
+  position: relative;
+  color: #a9a8a5;
+  font-size: 0.8em;
+  display: flex;
+  align-items: center;
+  max-height: 20px;
+}

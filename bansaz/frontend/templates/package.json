@@ -12,17 +12,26 @@
   "license": "ISC",
   "dependencies": {
     "@material-ui/core": "^4.10.2",
+    "@material-ui/icons": "^4.9.1",
+    "css-loader": "^3.6.0",
+    "file-loader": "^6.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^6.1.0",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "react-swipeable-views": "^0.13.9",
+    "react-topbar-progress-indicator": "^4.1.0",
+    "style-loader": "^1.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
+    "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/preset-env": "^7.10.2",
     "@babel/preset-react": "^7.10.1",
     "babel-loader": "^8.1.0",
     "html-webpack-plugin": "^4.3.0",
+    "sass": "^1.26.8",
+    "sass-loader": "^8.0.2",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
