@@ -4,7 +4,7 @@ module.exports = {
   entry: "./src/index.js",
   output: {
     path: path.join(__dirname, "/dist"),
-    filename: "bundle.js",
+    filename: "./static/bundle.js",
   },
   watch: true,
   watchOptions: {
@@ -45,7 +45,7 @@ module.exports = {
             loader: "file-loader",
             options: {
               name: "[name].[ext]",
-              outputPath: "fonts/",
+              outputPath: "./static/fonts/",
             },
           },
         ],
@@ -57,8 +57,8 @@ module.exports = {
             loader: "file-loader",
             options: {
               name: "[name].[ext]",
-              outputPath: "img/",
-              publicPath: "img/",
+              outputPath: "./static/img/",
+              publicPath: "./static/img/",
             },
           },
         ],
