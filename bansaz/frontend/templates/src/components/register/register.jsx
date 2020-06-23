@@ -6,17 +6,16 @@ import {
   InputAdornment,
   Button,
   LinearProgress,
-  Checkbox,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import AnimatedBackground from "../animatedBackground";
 import { Link } from "react-router-dom";
 import Swipe from "react-swipeable-views";
 // Icons
-import { Person } from "@material-ui/icons";
+import { Person, AlternateEmail } from "@material-ui/icons";
 // Pics
-import UserLogo from "../../pics/settings.png";
-import KeyLogo from "../../pics/add.png";
+import RegisterLogo from "../../pics/settings.png";
+import SettingsLogo from "../../pics/add.png";
 const useStyles = () => ({
   avatar: {
     height: 150,
@@ -113,6 +112,7 @@ class Login extends Component {
         break;
     }
   };
+
   render() {
     return (
       <section className="login">
@@ -128,24 +128,17 @@ class Login extends Component {
                 <Avatar
                   classes={{ root: this.classes.avatar, img: this.classes.img }}
                   alt="USER"
-                  src={UserLogo}
+                  src={SettingsLogo}
                 />
               </div>
+              {/* Full Name Here */}
               <div className="uId">
                 <TextField
-                  disabled={this.state.isUserFieldDisabled}
-                  label="User Id"
-                  error={!this.state.isUserCorrect}
-                  helperText={
-                    !this.state.isUserCorrect ? "Invalid username" : ""
-                  }
-                  placeholder="Username or Email"
+                  label="Full Name"
+                  placeholder="Enter Full Name"
                   classes={{
                     root: this.classes.textField,
                   }}
-                  value={this.state.userName}
-                  onChange={(e) => this.setState({ userName: e.target.value })}
-                  autoFocus
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -155,21 +148,24 @@ class Login extends Component {
                   }}
                 />
               </div>
-              <div className="remember">
-                {/* For remembering Login Data */}
-                <Checkbox
-                  checked={this.state.isLoginRememberChecked}
-                  indeterminate
-                  name="Remember Login"
-                  classes={{ checked: this.classes.customCheckBox }}
-                  onChange={() =>
-                    this.setState((prev) => ({
-                      isLoginRememberChecked: !prev.isLoginRememberChecked,
-                    }))
-                  }
+              {/* Email Address Here */}
+              <div className="uId">
+                <TextField
+                  label="Email"
+                  placeholder="Enter email address"
+                  classes={{
+                    root: this.classes.textField,
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AlternateEmail />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
-                Keep logged in
               </div>
+              <div className="uId"></div>
               <div className="controlBar">
                 <Button
                   variant="contained"
@@ -190,7 +186,7 @@ class Login extends Component {
                 <Avatar
                   classes={{ root: this.classes.avatar, img: this.classes.img }}
                   alt="USER"
-                  src={KeyLogo}
+                  src={RegisterLogo}
                 />
               </div>
               <div className="uId">
