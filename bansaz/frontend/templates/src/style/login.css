@@ -9,9 +9,8 @@
   height: 100%;
   width: 100%;
 }
-.loginForm {
-  height: 600px;
-  width: 400px;
+.loginForm,
+.registerForm {
   margin: auto;
   border-radius: 0px 0px 40px 10px;
   background-color: #404040e6;
@@ -19,15 +18,28 @@
   box-sizing: border-box;
   top: 100px;
 }
+.loginForm {
+  height: 600px;
+  width: 400px;
+}
+.registerForm {
+  height: 750px;
+  width: 450px;
+  display: grid;
+  grid-template: auto / 1fr 5fr;
+  padding: 0px 80px 0px 0px;
+}
 .Avatar {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .controlBar {
-  justify-self: end;
-  bottom: 30px;
   position: relative;
+  justify-self: end;
+}
+.loginForm .controlBar {
+  bottom: 30px;
 }
 .controlBar button {
   margin-right: 10px;
@@ -52,9 +64,35 @@
   height: 100%;
   width: 100%;
 }
+.reg2 {
+  justify-items: end;
+}
+.reg3 {
+  font-size: 0.9em;
+  color: #e6dede;
+}
+.reg3,
+.reg2 {
+  grid-gap: 30px;
+  align-content: center;
+}
+.reg2 .Avatar,
+.reg3 .Avatar {
+  position: absolute;
+  top: 40px;
+  justify-self: center;
+}
 .loginForm > div,
-.loginForm > div > div {
+.loginForm > div > div,
+.registerForm > div:first-of-type,
+.registerForm > div > div:first-of-type {
   height: 100%;
+}
+.stepper {
+  max-height: 400px;
+  align-self: center;
+  position: relative;
+  left: 10px;
 }
 .remember {
   min-width: 250px;
@@ -65,4 +103,10 @@
   display: flex;
   align-items: center;
   max-height: 20px;
+}
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
