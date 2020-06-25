@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.http import HttpResponse
 from django.contrib.auth import authenticate
+from django.views.decorators.csrf import csrf_protect
+from django.utils.decorators import method_decorator
 
 # Create your views here.
 from rest_framework import viewsets, status
@@ -18,6 +20,7 @@ class UserCreate(APIView):
     Creates the user. 
     """
 
+    @method_decorator(csrf_protect)
     def post(self, request, format="json"):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -31,6 +34,7 @@ class UserCreate(APIView):
 
 
 class UsernameLogin(APIView):
+    @method_decorator(csrf_protect)
     def post(self, request, format="json"):
         print(request.data)
         if "username" in request.data:
@@ -55,6 +59,7 @@ def new(req):
 
 
 class PasswordLogin(APIView):
+    @method_decorator(csrf_protect)
     def post(self, request, format="json"):
         if (not (request.session["username"] or request.session["email"])) or (
             not "password" in request.data
