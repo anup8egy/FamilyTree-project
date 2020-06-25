@@ -18,14 +18,16 @@ export default class LandingPage extends Component {
                 </div>
               </div>
               <div className="controlButtons">
-                <Button
-                  disableRipple
-                  variant="outlined"
-                  color="primary"
-                  size="large"
-                >
-                  Register
-                </Button>
+                <Link to="/register">
+                  <Button
+                    disableRipple
+                    variant="outlined"
+                    color="primary"
+                    size="large"
+                  >
+                    Register
+                  </Button>
+                </Link>
                 <Link to="/login">
                   <Button
                     disableRipple

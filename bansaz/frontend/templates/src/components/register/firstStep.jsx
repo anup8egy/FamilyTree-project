@@ -12,6 +12,13 @@ import {
 import PhoneCode from "./countriesPhone";
 import { Link } from "react-router-dom";
 import SettingsLogo from "../../pics/add.png";
+import CountriesList from "./countryList.json";
+const getPhoneCodeFromCountryCode = (countryCode) => {
+  let findCountryCode = (value) => value.code === countryCode;
+  let reqObject = CountriesList.list.find(findCountryCode);
+  if (reqObject === undefined || typeof reqObject === undefined) return "977";
+  return reqObject.phone;
+};
 class RegisterFirstStep extends Component {
   constructor(props) {
     super(props);
@@ -90,8 +97,8 @@ class RegisterFirstStep extends Component {
             setCountry={this.setCountry}
             error={this.props.isCountryCorrect}
             geoLocation={this.props.geoLocation}
-            geoPhoneCode={this.props.geoPhoneCode}
             disabled={this.props.isFirstStepAllRight}
+            country={this.props.country}
           />
         </div>
         {/* PhoneNumber */}
@@ -113,7 +120,7 @@ class RegisterFirstStep extends Component {
                   <Call />
                   &nbsp;&nbsp;+
                   {this.props.countryPhoneCode === ""
-                    ? this.props.geoPhoneCode
+                    ? getPhoneCodeFromCountryCode(this.props.geoLocation)
                     : this.props.countryPhoneCode}
                 </InputAdornment>
               ),

@@ -115,8 +115,41 @@ class Login extends Component {
   };
   // To get autmatic location
   getGeoLocation = () => {
-    this.setState({ geoLocation: "NP" });
-    this.setState({ geoPhoneCode: "977" });
+    let xhttp = new XMLHttpRequest();
+    let sent = false;
+    // Sending request to API
+    const setnewCountryGeo = (countryCode, country) => {
+      this.setState({
+        geoLocation: countryCode,
+      });
+      this.setState({ country: country });
+    };
+    // Do this if api request failed
+    const setDefault = () => {
+      // If request all right
+      this.setState({ geoLocation: "NP" });
+      this.setState({ geoPhoneCode: "977" });
+    };
+    // If cannot create XMLHttpRequest instance
+    if (!xhttp) setDefault();
+    // If ready to send data
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        // If request all right
+
+        setnewCountryGeo(
+          JSON.parse(this.responseText).country_code,
+          JSON.parse(this.responseText).country_name
+        );
+        sent = true;
+      }
+    };
+    xhttp.open("GET", "https://freegeoip.app/json/", true);
+    xhttp.send();
+    if (!sent) {
+      // If request not sent
+      // setDefault();
+    }
   };
   // First when user clicks Next
   handleRegisterFirst = () => {
