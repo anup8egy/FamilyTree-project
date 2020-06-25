@@ -10,7 +10,8 @@
   width: 100%;
 }
 .loginForm,
-.registerForm {
+.registerForm,
+.forgotForm {
   margin: auto;
   border-radius: 0px 0px 40px 10px;
   background-color: #404040e6;
@@ -22,12 +23,24 @@
   height: 600px;
   width: 400px;
 }
+.forgotForm {
+  height: 500px;
+  width: 400px;
+}
 .registerForm {
   height: 750px;
   width: 450px;
   display: grid;
   grid-template: auto / 1fr 5fr;
   padding: 0px 80px 0px 0px;
+}
+.forgotForm .swipeItem {
+  align-content: center;
+  grid-gap: 20px;
+}
+.forgotForm .Avatar {
+  position: absolute;
+  top: 10px;
 }
 .Avatar {
   display: flex;
@@ -85,7 +98,9 @@
 .loginForm > div,
 .loginForm > div > div,
 .registerForm > div:first-of-type,
-.registerForm > div > div:first-of-type {
+.registerForm > div > div:first-of-type,
+.forgotForm > div:first-of-type,
+.forgotForm > div > div:first-of-type {
   height: 100%;
 }
 .stepper {
@@ -109,4 +124,20 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+@media only screen and (max-width: 500px) {
+  .loginForm {
+    height: 100vh;
+    width: 100vw;
+  }
+  .loginForm,
+  .registerForm {
+    border-radius: 0;
+    top: 0;
+  }
+  .registerForm {
+    height: 150vh;
+    width: 100vw;
+    padding: 0;
+  }
 }

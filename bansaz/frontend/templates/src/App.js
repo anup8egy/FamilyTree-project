@@ -7,6 +7,7 @@ import LandingPage from "./components/landingPage";
 import ErrorPage from "./components/error";
 import Loginpage from "./components/login/login";
 import RegisterPage from "./components/register/register";
+import ForgotPassword from "./components/forgotPassword/forgot";
 class App extends Component {
   render() {
     return (
@@ -23,6 +24,9 @@ class App extends Component {
             </Route>
             <Route exact path="/register">
               <RegisterPage />
+            </Route>
+            <Route exact path="/forgotpassword">
+              <ForgotPassword />
             </Route>
             <Route path="*">
               <ErrorPage />

@@ -5,7 +5,6 @@ import { withStyles, makeStyles } from "@material-ui/core/styles";
 import VerifyIcon from "../../pics/verified.png";
 // icons
 import { Drafts, Textsms, Send } from "@material-ui/icons";
-const ButtonStyle = makeStyles(() => ({}));
 class SecondStep extends Component {
   constructor(props) {
     super(props);

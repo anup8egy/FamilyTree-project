@@ -12,6 +12,13 @@ import {
 import PhoneCode from "./countriesPhone";
 import { Link } from "react-router-dom";
 import SettingsLogo from "../../pics/add.png";
+import CountriesList from "./countryList.json";
+const getPhoneCodeFromCountryCode = (countryCode) => {
+  let findCountryCode = (value) => value.code === countryCode;
+  let reqObject = CountriesList.list.find(findCountryCode);
+  if (reqObject === undefined || typeof reqObject === undefined) return "977";
+  return reqObject.phone;
+};
 class RegisterFirstStep extends Component {
   constructor(props) {
     super(props);
@@ -24,6 +31,7 @@ class RegisterFirstStep extends Component {
     this.togglePWVisible = this.props.togglePWVisible;
     this.setPhoneCode = this.props.setPhoneCode;
     this.firstNext = this.props.firstNextClick;
+    this.setUsername = this.props.setUsername;
   }
   render() {
     return (
@@ -61,6 +69,31 @@ class RegisterFirstStep extends Component {
             }}
           />
         </div>
+        <div className="uId">
+          <TextField
+            disabled={this.props.isFirstStepAllRight}
+            label="Username"
+            placeholder="Enter Username"
+            value={this.props.username}
+            onChange={(e) => this.setUsername(e.target.value)}
+            helperText={
+              this.props.isNameCorrect
+                ? "At least six character"
+                : "Invalid Name or Already taken"
+            }
+            error={!this.props.isUsernameCorrect}
+            classes={{
+              root: this.props.classlist.textField,
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Person />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </div>
         {/* Email Address Here */}
         <div className="uId">
           <TextField
@@ -69,7 +102,9 @@ class RegisterFirstStep extends Component {
             placeholder="Enter email address"
             value={this.props.emailAddress}
             onChange={(e) => this.setEmail(e.target.value)}
-            helperText={this.props.isEmailCorrect ? "" : "Invalid Email"}
+            helperText={
+              this.props.isEmailCorrect ? "" : "Invalid Email or already used"
+            }
             error={!this.props.isEmailCorrect}
             classes={{
               root: this.props.classlist.textField,
@@ -90,8 +125,8 @@ class RegisterFirstStep extends Component {
             setCountry={this.setCountry}
             error={this.props.isCountryCorrect}
             geoLocation={this.props.geoLocation}
-            geoPhoneCode={this.props.geoPhoneCode}
             disabled={this.props.isFirstStepAllRight}
+            country={this.props.country}
           />
         </div>
         {/* PhoneNumber */}
@@ -113,7 +148,7 @@ class RegisterFirstStep extends Component {
                   <Call />
                   &nbsp;&nbsp;+
                   {this.props.countryPhoneCode === ""
-                    ? this.props.geoPhoneCode
+                    ? getPhoneCodeFromCountryCode(this.props.geoLocation)
                     : this.props.countryPhoneCode}
                 </InputAdornment>
               ),

@@ -86,6 +86,8 @@ class Login extends Component {
     isLoading: false,
     name: "",
     isNameCorrect: true,
+    username: "",
+    isUsernameCorrect: true,
     emailAddress: "",
     isEmailCorrect: true,
     country: "",
@@ -115,8 +117,41 @@ class Login extends Component {
   };
   // To get autmatic location
   getGeoLocation = () => {
-    this.setState({ geoLocation: "NP" });
-    this.setState({ geoPhoneCode: "977" });
+    let xhttp = new XMLHttpRequest();
+    let sent = false;
+    // Sending request to API
+    const setnewCountryGeo = (countryCode, country) => {
+      this.setState({
+        geoLocation: countryCode,
+      });
+      this.setState({ country: country });
+    };
+    // Do this if api request failed
+    const setDefault = () => {
+      // If request all right
+      this.setState({ geoLocation: "NP" });
+      this.setState({ geoPhoneCode: "977" });
+    };
+    // If cannot create XMLHttpRequest instance
+    if (!xhttp) setDefault();
+    // If ready to send data
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        // If request all right
+
+        setnewCountryGeo(
+          JSON.parse(this.responseText).country_code,
+          JSON.parse(this.responseText).country_name
+        );
+        sent = true;
+      }
+    };
+    xhttp.open("GET", "https://freegeoip.app/json/", true);
+    xhttp.send();
+    if (!sent) {
+      // If request not sent
+      // setDefault();
+    }
   };
   // First when user clicks Next
   handleRegisterFirst = () => {
@@ -126,6 +161,7 @@ class Login extends Component {
     // Check if Full Name empty
     let requiredParams = [
       this.state.name,
+      this.state.username,
       this.state.emailAddress,
       this.state.country,
       this.state.phone,
@@ -134,6 +170,7 @@ class Login extends Component {
     ];
     let fnxParams = [
       (val) => this.checkName(val),
+      (val) => this.checkUsername(val),
       (val) => this.checkEmail(val),
       (val) => this.checkCountry(val),
       (val) => this.checkPhone(val),
@@ -173,6 +210,10 @@ class Login extends Component {
     if (name.length < 4) return false;
     return true;
   };
+  checkUsername = (userName) => {
+    if (userName.length < 6) return false;
+    return true;
+  };
   checkEmail = (email) => {
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
@@ -198,6 +239,7 @@ class Login extends Component {
   registerFxnOnEvent = (index) => {
     let fxns = [
       (val) => this.setState({ isNameCorrect: val }),
+      (val) => this.setState({ isUsernameCorrect: val }),
       (val) => this.setState({ isEmailCorrect: val }),
       (val) => this.setState({ isCountryCorrect: val }),
       (val) => this.setState({ isPhoneCorrect: val }),
@@ -222,6 +264,7 @@ class Login extends Component {
   };
   // State Handlers
   handleName = (value) => this.setState({ name: value });
+  handleUserName = (value) => this.setState({ username: value });
   handleEmail = (value) => this.setState({ emailAddress: value });
   handleCountry = (countryName) => this.setState({ country: countryName });
   handlePhone = (value) => this.setState({ phone: value });
@@ -254,7 +297,10 @@ class Login extends Component {
           <div className="stepper">
             <VerticalLinearStepper index={this.state.swipeIndex} />
           </div>
-          <Swipe index={this.state.swipeIndex}>
+          <Swipe
+            index={this.state.swipeIndex}
+            disabled
+          >
             {/* First Step Regiatration */}
             <FirstStep
               classlist={this.classes}
@@ -284,6 +330,9 @@ class Login extends Component {
               setPhoneCode={this.handleCountryPhoneCode}
               firstNextClick={this.handleRegisterFirst}
               isPasswordShown={this.state.isPasswordShown}
+              username={this.state.username}
+              isUsernameCorrect={this.state.isUsernameCorrect}
+              setUsername={this.handleUserName}
             />
             <SecondStep
               classlist={this.classes}
@@ -292,6 +341,7 @@ class Login extends Component {
               phoneCode={this.state.countryPhoneCode}
               toggleLoader={this.showHideLoader}
               setSwipe={this.handleSwipe}
+              isFirstRight={this.state.isFirstStepAllRight}
             />
             <ThirdStep
               classlist={this.classes}
