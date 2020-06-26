@@ -125,6 +125,12 @@
   align-items: center;
   justify-content: center;
 }
+.instead a{
+  color: #b5adbb;
+}
+.instead a:hover{
+  text-decoration: underline;
+}
 @media only screen and (max-width: 500px) {
   .loginForm {
     height: 100vh;

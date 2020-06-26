@@ -25,7 +25,7 @@ class App extends Component {
             <Route exact path="/register">
               <RegisterPage />
             </Route>
-            <Route exact path="/forgotpassword">
+            <Route exact path="/forgot">
               <ForgotPassword />
             </Route>
             <Route path="*">
