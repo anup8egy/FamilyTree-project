@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.http import HttpResponse
 from django.contrib.auth import authenticate
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.utils.decorators import method_decorator
 
 # Create your views here.
@@ -21,7 +21,7 @@ class UserCreate(APIView):
     Creates the user. 
     """
 
-    @method_decorator(csrf_protect)
+    @method_decorator(csrf_exempt)
     def post(self, request, format="json"):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
