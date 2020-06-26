@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.http import HttpResponse
@@ -27,9 +28,15 @@ class UserCreate(APIView):
             user = serializer.save()
             if user:
                 token = Token.objects.create(user=user)
+<<<<<<< HEAD
                 json = dict()
                 json["token"] = token.key
                 return Response(json, status=status.HTTP_201_CREATED)
+=======
+                return Response(
+                    json.dumps({"token": token.key}), status=status.HTTP_201_CREATED
+                )
+>>>>>>> 6e6faa3ee29ae24b120928661cb326408f10af4f
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -61,7 +68,7 @@ def new(req):
 class PasswordLogin(APIView):
     @method_decorator(csrf_protect)
     def post(self, request, format="json"):
-        if (not (request.session["username"] or request.session["email"])) or (
+        if (not ("username" in request.session or "email" in request.session)) or (
             not "password" in request.data
         ):
             return Response(

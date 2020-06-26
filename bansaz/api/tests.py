@@ -2,6 +2,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 
 
 class AccountsTest(APITestCase):
@@ -13,6 +14,11 @@ class AccountsTest(APITestCase):
 
         # URL for creating an account.
         self.create_url = reverse("user_register")
+<<<<<<< HEAD
+=======
+        self.login_email_url = reverse("username_login")
+        self.login_password_url = reverse("password_login")
+>>>>>>> 6e6faa3ee29ae24b120928661cb326408f10af4f
 
     def test_create_user(self):
         """
@@ -27,13 +33,28 @@ class AccountsTest(APITestCase):
 
         response = self.client.post(self.create_url, data, format="json")
 
-        print(response.data)
+        self.assertEqual(
+            response.data["token"],
+            Token.objects.get(user=User.objects.get(username="foobar")).key,
+        )
         # We want to make sure we have two users in the database..
         self.assertEqual(User.objects.count(), 2)
         # And that we're returning a 201 created code.
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # Additionally, we want to return the username and email upon successful creation.
-        self.assertEqual(response.data["username"], data["username"])
-        self.assertEqual(response.data["email"], data["email"])
-        self.assertTrue("password" in response.data)
 
+    def test_user_login(self):
+        """ 
+                Ensure we can login and proper token is returned
+            """
+        data_email = {"email": "test@example.com"}
+        data_pass = {"password": "testpassword"}
+
+        response_pre = self.client.post(self.login_email_url, data_email, format="json")
+        self.assertEqual(response_pre.status_code, status.HTTP_200_OK)
+
+        response = self.client.post(self.login_password_url, data_pass, format="json")
+
+        self.assertEqual(
+            response.data["token"],
+            Token.objects.get(user=User.objects.get(username="testuser")).key,
+        )
