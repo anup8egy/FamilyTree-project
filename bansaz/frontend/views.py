@@ -1,7 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import View, generic
+from django.http import HttpResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.decorators import method_decorator
+
+from api.models import Profile
 
 # Create your views here.
 
@@ -12,4 +15,6 @@ class FrontEndView(generic.TemplateView):
 
 
 class EmailVerification(View):
-    pass
+    def get(self, request, token_code):
+
+        return HttpResponse(token_code)

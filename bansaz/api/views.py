@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.utils.decorators import method_decorator
+from django.utils.crypto import get_random_string
 
 # Create your views here.
 from rest_framework import viewsets, status
@@ -12,7 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, EmailSerializer
 from django.contrib.auth.models import User
 
 
@@ -35,7 +36,7 @@ class UserCreate(APIView):
 
 
 class UsernameLogin(APIView):
-    @method_decorator(csrf_protect)
+    @method_decorator(csrf_exempt)
     def post(self, request, format="json"):
         print(request.data)
         if "username" in request.data:
@@ -83,4 +84,17 @@ class PasswordLogin(APIView):
             )
         token, created = Token.objects.get_or_create(user=user)
 
-        return Response({"token": token.key}, status=status.HTTP_200_OK)
+        return Response(json.dumps({"token": token.key}), status=status.HTTP_200_OK)
+
+
+class RequestEmailVerification(View):
+    @method_decorator(csrf_protect)
+    def post(self, request):
+        serializer = EmailSerializer(data=request.data)
+        if serializer.is_valid():
+            user = get_object_or_404(User, email=request.data["email"])
+            user.profile.token_code = get_random_string(length=80)
+            user.save()
+            return Response(user.profile.token_code)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+

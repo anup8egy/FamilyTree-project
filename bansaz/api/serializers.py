@@ -38,6 +38,11 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
+class EmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(
+        required=True
+    )
+
 
 
 

@@ -20,6 +20,7 @@ from frontend import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
+    path("email-verification/<token_code>", views.EmailVerification.as_view()),
 ]
 urlpatterns += [
     re_path(r"(?P<path>.*)", views.FrontEndView.as_view()),
