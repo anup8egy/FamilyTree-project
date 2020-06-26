@@ -28,15 +28,9 @@ class UserCreate(APIView):
             user = serializer.save()
             if user:
                 token = Token.objects.create(user=user)
-<<<<<<< HEAD
-                json = dict()
-                json["token"] = token.key
-                return Response(json, status=status.HTTP_201_CREATED)
-=======
                 return Response(
                     json.dumps({"token": token.key}), status=status.HTTP_201_CREATED
                 )
->>>>>>> 6e6faa3ee29ae24b120928661cb326408f10af4f
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
