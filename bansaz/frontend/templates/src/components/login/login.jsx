@@ -12,6 +12,7 @@ import { withStyles } from "@material-ui/core/styles";
 import AnimatedBackground from "../animatedBackground";
 import { Link } from "react-router-dom";
 import Swipe from "react-swipeable-views";
+import {Helmet} from "react-helmet"
 // Icons
 import { Person } from "@material-ui/icons";
 // Pics
@@ -82,13 +83,28 @@ class Login extends Component {
         break;
       // If all Correct then next
       default:
+        // Send Request to API
+        this.sendRequestToUserLogin();
         setTimeout(() => {
-          this.setState({ isUserFieldDisabled: true });
-          this.setState({ swipeIndex: 1 });
+          // this.setState({ isUserFieldDisabled: true });
+          // this.setState({ swipeIndex: 1 });
           this.setState({ isLoading: false });
         }, 1000);
         break;
     }
+  };
+  sendRequestToUserLogin = () => {
+    let userCredentials = { username: this.state.userName };
+    fetch("/api/auth", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userCredentials),
+    })
+      .then((val) => val.json())
+      .then((val) => console.log(val))
+      .catch((err) => console.log(err));
   };
   handlePassword = () => {
     // To show loader on top
@@ -116,12 +132,15 @@ class Login extends Component {
   render() {
     return (
       <section className="login">
+        <Helmet>
+          <title>Login | Kul</title>
+        </Helmet>
         <div className="animated">
           <AnimatedBackground />
         </div>
         <div className="loginForm">
           {this.state.isLoading ? <LinearProgBar /> : ""}
-          <Swipe index={this.state.swipeIndex}>
+          <Swipe index={this.state.swipeIndex} disabled>
             {/* User ID */}
             <div className="swipeItem">
               <div className="Avatar">

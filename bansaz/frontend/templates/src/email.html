@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Send</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jost&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: "Jost", sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: white;
+        }
+
+        body,
+        .wrapper {
+            background-color: #16222a;
+            color: #ebe3e3d6;
+        }
+
+        .wrapper {
+            display: grid;
+            align-items: center;
+            justify-items: center;
+            min-height: 400px;
+            align-content: center;
+            grid-gap: 20px;
+        }
+
+        .name {
+            display: flex;
+            justify-content: space-around;
+            font-size: 2em;
+        }
+
+        .congrats {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .congrats {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .welcome {
+            font-size: 1.4em;
+        }
+
+        .confirm {
+            font-size: 1.2em;
+        }
+
+        .verificationReason {
+            font-size: 0.8em;
+        }
+
+        .verify {
+            min-height: 40px;
+            min-width: 80px;
+            background: #235b46;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 40px;
+            border-radius: 1px 10px 0px 20px;
+            cursor: pointer;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .verify:hover {
+            background: #1e4c3ba3;
+            color: #e0e0e0;
+        }
+
+        .social {
+            display: flex;
+            min-width: 300px;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .social_items a:hover {
+            color: white;
+        }
+
+        .social_items {
+            font-size: 0.8em;
+        }
+
+        .social_items a {
+            color: #d4b4d2;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="wrapper">
+        <div class="name">
+            <span>Logo</span>
+            <span>Kul, The Clan App</span>
+        </div>
+        <div class="congrats">
+            <span class="welcome"> Welcome to Kul</span>
+            <span class="confirm">Please,confirm your email address to get started</span>
+        </div>
+        <div class="verificationReason">
+            This is necessary in order to reset your password in case you forget it
+        </div>
+        <div class="verify">
+            <a href="#verify_link_here">Verify now</a>
+        </div>
+        <div class="social">
+            <span> Follow us on:</span>
+            <span class="social_items"><a href="https://www.facebook.com">Facebook</a></span>
+            <span class="social_items"> <a href="https://www.instagram.com.com">Instagram</a></span>
+        </div>
+</body>
+</section>
+</html>
