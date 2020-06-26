@@ -49,6 +49,7 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
+        # "rest_framework.renderers.BrowsableAPIRenderer",
     ],
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.UserRateThrottle",
@@ -142,10 +143,7 @@ STATICFILES_DIRS = [
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-MAILER_EMAIL_BACKEND = EMAIL_BACKEND
 EMAIL_USE_TLS = True
-EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = "yubraj.bhandari.hero@gmail.com"
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = "haCKer@me3#4$"
