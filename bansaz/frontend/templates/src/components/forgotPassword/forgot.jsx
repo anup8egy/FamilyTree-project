@@ -16,6 +16,7 @@ import "../../style/login.css";
 // pics
 import EmailICon from "../../pics/email.png";
 import ForgotIcon from "../../pics/risk.png";
+import DoneIcon from "../../pics/correct.png";
 // icons
 import {
   Drafts,
@@ -96,8 +97,8 @@ class ForgotPassword extends Component {
     if (this.state.radioValue === 0) {
       // send mail
       setTimeout(() => {
-        this.setSwipe(2);
-        this.toggleLoader(false);
+        this.setState({ swipeIndex: 2 });
+        this.setState({ isLoading: false });
       }, 1000);
     } else {
       // Send code on phone
@@ -237,6 +238,44 @@ class ForgotPassword extends Component {
                   <Send />
                 </Fab>
               </div>
+            </div>
+            {/* Email sent and resend here */}
+            <div className="swipeItem reg3">
+              <div className="Avatar">
+                <Avatar
+                  classes={{
+                    root: this.props.classes.avatar,
+                    img: this.props.classes.img,
+                  }}
+                  alt="USER"
+                  src={DoneIcon}
+                />
+              </div>
+              <div className="info">
+                <span>A password reset link has been sent to your email.</span>
+                <span style={{ fontSize: "0.8em" }}>
+                  {" "}
+                  If you didn't find in Inbox,check the spam folder.
+                </span>
+              </div>
+              <span style={{ display: "flex", alignItems: "center" }}>
+                Didn't recieve mail.
+                <Button
+                  color="primary"
+                  onClick={this.setState({ swipeIndex: 1 })}
+                >
+                  Resend
+                </Button>
+              </span>
+              <span>
+                <span style={{ fontSize: "1em" }}>Note:</span>
+                <span style={{ fontSize: "0.8em" }}>
+                  Maximum 5 password reset mails per day.
+                </span>
+              </span>
+              <Button variant="contained" color="primary">
+                <Link to="/login">Login</Link>
+              </Button>
             </div>
           </Swipe>
         </div>

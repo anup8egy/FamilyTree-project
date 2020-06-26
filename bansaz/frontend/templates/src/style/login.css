@@ -119,16 +119,19 @@
   align-items: center;
   max-height: 20px;
 }
+.forgotForm .info {
+  margin-top: 100px;
+}
 .info {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
-.instead a{
+.instead a {
   color: #b5adbb;
 }
-.instead a:hover{
+.instead a:hover {
   text-decoration: underline;
 }
 @media only screen and (max-width: 500px) {
