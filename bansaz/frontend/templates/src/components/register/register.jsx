@@ -76,6 +76,7 @@ const useStyles = () => ({
     fontSize: "0.8em",
   },
 });
+// Send request to API to register first step
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -84,20 +85,20 @@ class Login extends Component {
   state = {
     swipeIndex: 0,
     isLoading: false,
-    name: "",
+    name: "hello",
     isNameCorrect: true,
-    username: "",
+    username: "Bimarsh",
     isUsernameCorrect: true,
-    emailAddress: "",
+    emailAddress: "ello@gmail.co",
     isEmailCorrect: true,
-    country: "",
+    country: "Nepal",
     isCountryCorrect: true,
-    countryPhoneCode: "",
-    phone: "",
+    countryPhoneCode: "977",
+    phone: "9860072324",
     isPhoneCorrect: true,
-    password: "",
+    password: "nepal123",
     isPasswordCorrect: true,
-    confirmPassword: "",
+    confirmPassword: "nepal123",
     isConfirmPasswordCorrect: true,
     isFirstStepAllRight: false,
     geoLocation: "",
@@ -191,12 +192,42 @@ class Login extends Component {
     // Check if all were right
     if (allTrue) {
       // Goto Second Step
-      setTimeout(() => {
-        this.setState({ swipeIndex: 1 });
-      }, 1000);
-      // Disable all options
-      if (!this.state.isFirstStepAllRight)
-        this.setState({ isFirstStepAllRight: true });
+      let regData = {
+        username: this.state.username,
+        email: this.state.emailAddress,
+        password: this.state.password,
+        profile: {
+          country: this.state.country,
+          phone_number: this.state.countryPhoneCode + this.state.phone,
+        },
+      };
+      // Example POST method implementation:
+      fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(regData),
+      })
+        .then((response) => {
+          if (response.status !== 200) {
+            console.log(response);
+            return response.json();
+          } else {
+            return response.json();
+          }
+        })
+        .then((response) => {
+          if (!response) console.log("error");
+          else console.log(response);
+        });
+
+      // setTimeout(() => {
+      //   this.setState({ swipeIndex: 1 });
+      // }, 1000);
+      // // Disable all options
+      // if (!this.state.isFirstStepAllRight)
+      //   this.setState({ isFirstStepAllRight: true });
     } else {
       if (this.state.isFirstStepAllRight)
         this.setState({ isFirstStepAllRight: false });
@@ -275,12 +306,10 @@ class Login extends Component {
   };
   // To hide or show password
   handleVisibility = () => {
-    console.log("Clicked");
     this.setState((state) => ({
       isPasswordShown: !state.isPasswordShown,
     }));
   };
-
   // Second Step Methods
   render() {
     return (
@@ -297,10 +326,7 @@ class Login extends Component {
           <div className="stepper">
             <VerticalLinearStepper index={this.state.swipeIndex} />
           </div>
-          <Swipe
-            index={this.state.swipeIndex}
-            disabled
-          >
+          <Swipe index={this.state.swipeIndex} disabled>
             {/* First Step Regiatration */}
             <FirstStep
               classlist={this.classes}

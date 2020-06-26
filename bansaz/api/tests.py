@@ -14,8 +14,11 @@ class AccountsTest(APITestCase):
 
         # URL for creating an account.
         self.create_url = reverse("user_register")
+<<<<<<< HEAD
+=======
         self.login_email_url = reverse("username_login")
         self.login_password_url = reverse("password_login")
+>>>>>>> 6e6faa3ee29ae24b120928661cb326408f10af4f
 
     def test_create_user(self):
         """

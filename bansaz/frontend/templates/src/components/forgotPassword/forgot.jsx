@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Avatar, Button, Fab, Radio } from "@material-ui/core";
+import {
+  Avatar,
+  Button,
+  Fab,
+  TextField,
+  InputAdornment,
+  Radio,
+  LinearProgress,
+} from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import AnimatedBackground from "../animatedBackground";
 import Swipe from "react-swipeable-views";
@@ -8,8 +16,15 @@ import "../../style/login.css";
 // pics
 import EmailICon from "../../pics/email.png";
 import ForgotIcon from "../../pics/risk.png";
+import DoneIcon from "../../pics/correct.png";
 // icons
-import { Drafts, Send } from "@material-ui/icons";
+import {
+  Drafts,
+  FiberManualRecord,
+  Send,
+  AlternateEmail,
+} from "@material-ui/icons";
+import { Link } from "react-router-dom";
 const useStyles = () => ({
   avatar: {
     height: 150,
@@ -19,6 +34,31 @@ const useStyles = () => ({
   img: {
     width: "auto",
     height: "50%",
+  },
+  textField: {
+    maxWidth: 240,
+    minWidth: 240,
+    "& label": {
+      color: "#bfb9b9ed",
+    },
+    "& label.Mui-focused": {
+      color: "white",
+    },
+    "& .MuiInput-underline::before": {
+      borderBottom: "1px solid rgba(130, 125, 125, 0.42)",
+    },
+    "& .MuiInput-underline::after": {
+      borderBottom: "1px solid rgba(205, 198, 198, 0.64)",
+    },
+    "& .MuiInput-underline:hover:not(.Mui-disabled)::before": {
+      borderBottom: "1px solid rgba(197, 191, 191, 0.87)",
+    },
+    "& .MuiInputBase-root": {
+      color: "rgba(211, 200, 200, 0.87)",
+    },
+    "& p": {
+      color: "rgba(189, 182, 182, 0.7)",
+    },
   },
   customCheckBox: {
     color: "#afb3d3 !important",
@@ -41,6 +81,10 @@ const useStyles = () => ({
 class ForgotPassword extends Component {
   state = {
     radioValue: 0,
+    email: "",
+    isMailCorrect: true,
+    isLoading: false,
+    swipeIndex: 0,
   };
   getShortEmail = (value) => {
     let whereisAT = value.indexOf("@");
@@ -49,30 +93,61 @@ class ForgotPassword extends Component {
     return `${firstPart}...${secondPart}`;
   };
   sendMail = () => {
-    this.toggleLoader(true);
+    this.setState({ isLoading: true });
     if (this.state.radioValue === 0) {
       // send mail
       setTimeout(() => {
-        this.setSwipe(2);
-        this.toggleLoader(false);
+        this.setState({ swipeIndex: 2 });
+        this.setState({ isLoading: false });
       }, 1000);
     } else {
       // Send code on phone
     }
   };
+  handleEmail = () => {
+    this.setState({ isLoading: true });
+    // IF mail check failed
+    if (!this.checkMail()) {
+      this.setState({ isMailCorrect: false });
+    } else {
+      this.setState({ isMailCorrect: true });
+      this.setState({ swipeIndex: 1 });
+    }
+    setTimeout(() => this.setState({ isLoading: false }), 1000);
+  };
+  checkMail = () => {
+    // Check mail regex
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!re.test(this.state.email)) return false;
+    // Request to API here
+    return true;
+  };
   render() {
     return (
       <section className="login">
         <Helmet>
-          <title>Registration | Kul</title>
+          <title>Account Recovery | Kul</title>
         </Helmet>
         <div className="animated">
           <AnimatedBackground />
         </div>
         <div className="forgotForm">
-          {this.state.isLoading ? <LinearProgBar /> : ""}
+          <section>{this.state.isLoading ? <LinearProgBar /> : ""}</section>
           <Swipe index={this.state.swipeIndex} disabled>
+            {/* email enter here */}
             <div className="swipeItem">
+              <span
+                style={{
+                  fontSize: "1.3em",
+                  color: "#dcd2d2",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  marginTop: 20,
+                }}
+              >
+                <FiberManualRecord />
+                Account Recovery
+              </span>
               <div className="Avatar">
                 <Avatar
                   classes={{
@@ -83,7 +158,45 @@ class ForgotPassword extends Component {
                   src={ForgotIcon}
                 />
               </div>
+              <div className="uId">
+                <TextField
+                  label="Email"
+                  placeholder="Enter your email address"
+                  helperText={
+                    this.state.isMailCorrect
+                      ? ""
+                      : "This email is'nt associated with Kul"
+                  }
+                  error={!this.state.isMailCorrect}
+                  classes={{
+                    root: this.props.classes.textField,
+                  }}
+                  value={this.state.email}
+                  onChange={(e) => this.setState({ email: e.target.value })}
+                  autoFocus
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AlternateEmail />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </div>
+              <div className="controlBar">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={this.handleEmail}
+                >
+                  Next
+                </Button>
+              </div>
+              <div className="instead">
+                <Link to="/login">Login Instead</Link>
+              </div>
             </div>
+            {/* Send Email here */}
             <div className="swipeItem">
               <div className="Avatar">
                 <Avatar
@@ -110,8 +223,8 @@ class ForgotPassword extends Component {
                   disableRipple
                 >
                   <Drafts />
-                  Send verification code to anu..@gmail.com
-                  {/* {this.getShortEmail(this.props.email)} */}
+                  Send verification code to:
+                  {this.getShortEmail(this.state.email)}
                   <CustomRadio
                     checked={this.state.radioValue === 0}
                     name="send"
@@ -125,6 +238,44 @@ class ForgotPassword extends Component {
                   <Send />
                 </Fab>
               </div>
+            </div>
+            {/* Email sent and resend here */}
+            <div className="swipeItem reg3">
+              <div className="Avatar">
+                <Avatar
+                  classes={{
+                    root: this.props.classes.avatar,
+                    img: this.props.classes.img,
+                  }}
+                  alt="USER"
+                  src={DoneIcon}
+                />
+              </div>
+              <div className="info">
+                <span>A password reset link has been sent to your email.</span>
+                <span style={{ fontSize: "0.8em" }}>
+                  {" "}
+                  If you didn't find in Inbox,check the spam folder.
+                </span>
+              </div>
+              <span style={{ display: "flex", alignItems: "center" }}>
+                Didn't recieve mail.
+                <Button
+                  color="primary"
+                  onClick={this.setState({ swipeIndex: 1 })}
+                >
+                  Resend
+                </Button>
+              </span>
+              <span>
+                <span style={{ fontSize: "1em" }}>Note:</span>
+                <span style={{ fontSize: "0.8em" }}>
+                  Maximum 5 password reset mails per day.
+                </span>
+              </span>
+              <Button variant="contained" color="primary">
+                <Link to="/login">Login</Link>
+              </Button>
             </div>
           </Swipe>
         </div>
@@ -141,4 +292,20 @@ const CustomRadio = withStyles({
   },
   checked: {},
 })((props) => <Radio color="default" {...props} />);
+const LinearProgBar = withStyles((theme) => ({
+  root: {
+    height: 3,
+    maxHeight: 3,
+    position: "absolute",
+    top: 0,
+    width: "100%",
+  },
+  colorPrimary: {
+    backgroundColor: "#393939",
+  },
+  bar: {
+    backgroundColor: "#b9c2cb",
+  },
+}))(LinearProgress);
+
 export default withStyles(useStyles)(ForgotPassword);
