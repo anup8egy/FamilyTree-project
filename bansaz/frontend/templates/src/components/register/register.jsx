@@ -310,7 +310,6 @@ class Login extends Component {
       isPasswordShown: !state.isPasswordShown,
     }));
   };
-
   // Second Step Methods
   render() {
     return (
