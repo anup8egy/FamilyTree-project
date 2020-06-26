@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.http import HttpResponse
@@ -27,7 +28,9 @@ class UserCreate(APIView):
             user = serializer.save()
             if user:
                 token = Token.objects.create(user=user)
-                return Response({"token": token.key}, status=status.HTTP_201_CREATED)
+                return Response(
+                    json.dumps({"token": token.key}), status=status.HTTP_201_CREATED
+                )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
