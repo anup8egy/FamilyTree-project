@@ -27,9 +27,9 @@ class UserCreate(APIView):
             user = serializer.save()
             if user:
                 token = Token.objects.create(user=user)
-                json = dict()
-                json["token"] = token.key
-                return Response(json, status=status.HTTP_201_CREATED)
+                return Response(
+                    '{"token": {token.key} }', status=status.HTTP_201_CREATED
+                )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -61,7 +61,7 @@ def new(req):
 class PasswordLogin(APIView):
     @method_decorator(csrf_protect)
     def post(self, request, format="json"):
-        if (not (request.session["username"] or request.session["email"])) or (
+        if (not ("username" in request.session or "email" in request.session)) or (
             not "password" in request.data
         ):
             return Response(

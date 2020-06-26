@@ -15,3 +15,7 @@ class Profile(models.Model):
     )
 
     phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True)
+
+    token_code = models.CharField()
+    token_expiration = models.DateTimeField()
+    account_activated = models.BooleanField(default=False)

@@ -10,3 +10,6 @@ from django.utils.decorators import method_decorator
 class FrontEndView(generic.TemplateView):
     template_name = "index.html"
 
+
+class EmailVerification(View):
+    pass
