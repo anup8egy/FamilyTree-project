@@ -104,6 +104,7 @@ class Login extends Component {
     geoLocation: "",
     geoPhoneCode: "",
     isPasswordShown: false,
+    showFirstError: false,
   };
 
   // First Step Methods
@@ -201,7 +202,7 @@ class Login extends Component {
           phone_number: this.state.countryPhoneCode + this.state.phone,
         },
       };
-      // Example POST method implementation:
+      // API handles here
       fetch("/api/auth/register", {
         method: "POST",
         headers: {
@@ -210,24 +211,33 @@ class Login extends Component {
         body: JSON.stringify(regData),
       })
         .then((response) => {
-          if (response.status !== 200) {
-            console.log(response);
-            return response.json();
-          } else {
-            return response.json();
+          if (response.status === 201) {
+            this.setState({ isFirstStepAllRight: true });
           }
+          return response.json();
         })
         .then((response) => {
-          if (!response) console.log("error");
-          else console.log(response);
-        });
-
-      // setTimeout(() => {
-      //   this.setState({ swipeIndex: 1 });
-      // }, 1000);
-      // // Disable all options
-      // if (!this.state.isFirstStepAllRight)
-      //   this.setState({ isFirstStepAllRight: true });
+          // If all right
+          // We get token here
+          console.log(JSON.parse(response));
+          if (this.state.isFirstStepAllRight) {
+            this.setState({ showFirstError: false });
+            setTimeout(() => {
+              this.setState({ swipeIndex: 1 });
+            }, 1000);
+            // Disable all options
+            this.setState({ isFirstStepAllRight: true });
+          } else {
+            // If wrong
+            if (response.hasOwnProperty("email"))
+              this.setState({ isEmailCorrect: false });
+            if (response.hasOwnProperty("username"))
+              this.setState({ isUsernameCorrect: false });
+            if (response.hasOwnProperty("detail"))
+              this.setState({ showFirstError: true });
+          }
+        })
+        .catch(this.setState({ showFirstError: true }));
     } else {
       if (this.state.isFirstStepAllRight)
         this.setState({ isFirstStepAllRight: false });
@@ -359,6 +369,7 @@ class Login extends Component {
               username={this.state.username}
               isUsernameCorrect={this.state.isUsernameCorrect}
               setUsername={this.handleUserName}
+              showError={this.state.showFirstError}
             />
             <SecondStep
               classlist={this.classes}

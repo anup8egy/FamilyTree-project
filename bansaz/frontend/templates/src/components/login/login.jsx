@@ -94,7 +94,10 @@ class Login extends Component {
     }
   };
   sendRequestToUserLogin = () => {
-    let userCredentials = { username: this.state.userName };
+    let userCredentials
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if(re.test(this.state.username)) userCredentials = { email: this.state.userName };  
+    else userCredentials={username=this.state.userName}  
     fetch("/api/auth", {
       method: "POST",
       headers: {
