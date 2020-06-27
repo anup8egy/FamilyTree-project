@@ -77,5 +77,5 @@ class AccountsTest(APITestCase):
         self.assertTrue("token_code" in json.loads(response.data))
         self.assertEqual(
             json.loads(response.data)["token_code"],
-            Profile.objects.get(user=user).token_code,
+            Profile.objects.get(user=user).activation_token_code,
         )

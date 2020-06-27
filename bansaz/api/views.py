@@ -1,17 +1,17 @@
 import json
 from django.shortcuts import render, get_object_or_404
+from django.utils.html import strip_tags
+from django.utils.decorators import method_decorator
+from django.utils.crypto import get_random_string
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
 from django.http import HttpResponse
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
-from django.utils.decorators import method_decorator
-from django.utils.crypto import get_random_string
 from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from datetime import datetime, timedelta, timezone
-from django.utils.html import strip_tags
 
 # Create your views here.
 from rest_framework import viewsets, status
@@ -19,7 +19,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
-from .serializers import UserSerializer, EmailSerializer
+from .serializers import UserSerializer
 from django.contrib.auth.models import User
 
 
@@ -99,8 +99,8 @@ class RequestEmailVerification(APIView):
     def post(self, request):
         if "token" in request.data:
             token = get_object_or_404(Token, key=request.data["token"])
-            token.user.profile.token_code = get_random_string(length=80)
-            token.user.profile.token_expiration = datetime.now(
+            token.user.profile.activation_token_code = get_random_string(length=80)
+            token.user.profile.activation_token_expiration = datetime.now(
                 timezone.utc
             ) + timedelta(days=1)
             token.user.profile.save()
@@ -110,19 +110,67 @@ class RequestEmailVerification(APIView):
                     "user": token.user,
                     "domain": "localhost:8000",
                     "uid": urlsafe_base64_encode(force_bytes(token.user.pk)),
-                    "token": token.user.profile.token_code,
+                    "token": token.user.profile.activation_token_code,
+                    "information": "Please,confirm your email address to get started ",
+                    "reason": "This is necessary in order to reset your password in case you forget it.",
+                    "button": "Verify Now",
+                    "link": "verify_email",
                 },
             )
             send_mail(
-                subject="Subject here",
+                subject="Activate Email",
                 html_message=html_message,
-                from_email="yubraj",
+                from_email="The kul app",
                 message=strip_tags(html_message),
-                recipient_list=["yubraj.bhadnari.hero@gmail.com"],
+                recipient_list=[
+                    "yubraj.bhadnari.hero@gmail.com",
+                    "anup8eguy@gmail.com ",
+                ],
                 fail_silently=False,
             )
-            return Response(json.dumps({"token_code": token.user.profile.token_code}))
+            return Response(
+                json.dumps({"token code sent to your mail": True}),
+                status=status.HTTP_200_OK,
+            )
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-# {"token":"12ac842661c756826b498b1b3212147191c4057c"}
+class RequestForgetPasswordVerification(APIView):
+    @method_decorator(csrf_exempt)
+    def post(self, request):
+        if "email" in request.data:
+            user = get_object_or_404(User, email=request.data["email"])
+            user.profile.forget_password_token_code = get_random_string(length=80)
+            user.profile.forget_password_token_expiration = datetime.now(
+                timezone.utc
+            ) + timedelta(days=1)
+            user.profile.save()
+            html_message = render_to_string(
+                "email.html",
+                {
+                    "user": user,
+                    "domain": "localhost:8000",
+                    "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                    "token": user.profile.forget_password_token_code,
+                    "information": "Click on the link given below to continue",
+                    "reason": "You can reset your password if you forgot.",
+                    "button": "Change Password",
+                    "link": "verify_forget_password",
+                },
+            )
+            send_mail(
+                subject="Password Reset",
+                html_message=html_message,
+                from_email="The Kul app",
+                message=strip_tags(html_message),
+                recipient_list=[request.data["email"]],
+                fail_silently=False,
+            )
+            return Response(
+                json.dumps({"Forget Password link sent to your mail": True}),
+                status=status.HTTP_200_OK,
+            )
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+# {"token":"58ffd467269200fc56e915f2285c1833a79bc8d4"}

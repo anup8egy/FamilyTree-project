@@ -14,5 +14,10 @@ urlpatterns = [
         views.RequestEmailVerification.as_view(),
         name="request_email_verification",
     ),
+    path(
+        "auth/request-forget-password-verification",
+        views.RequestForgetPasswordVerification.as_view(),
+        name="request_forget_password_verification",
+    ),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -16,6 +16,13 @@ class Profile(models.Model):
 
     phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True)
 
-    token_code = models.CharField(max_length=80, null=True, blank=True)
-    token_expiration = models.DateTimeField(null=True, blank=True)
+    activation_token_code = models.CharField(max_length=80, null=True, blank=True)
+    activation_token_expiration = models.DateTimeField(null=True, blank=True)
     account_activated = models.BooleanField(default=False)
+
+    forget_password_token_code = models.CharField(max_length=80, null=True, blank=True)
+    forget_password_token_expiration = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return "{}, activated:{} ".format(self.user, self.account_activated)
+

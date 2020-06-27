@@ -25,6 +25,11 @@ urlpatterns = [
         views.EmailVerification.as_view(),
         name="verify_email",
     ),
+    path(
+        "password-token-verification/<uidb64>/<token_code>",
+        views.ForgetPasswordVerification.as_view(),
+        name="verify_forget_password",
+    ),
 ]
 urlpatterns += [
     re_path(r"(?P<path>.*)", views.FrontEndView.as_view()),

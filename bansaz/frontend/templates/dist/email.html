@@ -110,13 +110,13 @@
         </div>
         <div class="congrats">
             <span class="welcome">Hi {{ user.username }}</span>
-            <span class="confirm">Please,confirm your email address to get started</span>
+            <span class="confirm">{{ information }}</span>
         </div>
         <div class="verificationReason">
-            This is necessary in order to reset your password in case you forget it
+            {{ reason }}
         </div>
         <div class="verify">
-            <a href="http://{{ domain }}{% url 'verify_email' uidb64=uid token_code=token %}">Verify now</a>
+            <a href="http://{{ domain }}{% url link uidb64=uid token_code=token %}">{{ button }}</a>
         </div>
         <div class="social">
             <span> Follow us on:</span>
