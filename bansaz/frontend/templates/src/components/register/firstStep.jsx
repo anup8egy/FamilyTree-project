@@ -8,6 +8,7 @@ import {
   VisibilityOff,
   Https,
   ConfirmationNumber,
+  Report,
 } from "@material-ui/icons";
 import PhoneCode from "./countriesPhone";
 import { Link } from "react-router-dom";
@@ -69,6 +70,7 @@ class RegisterFirstStep extends Component {
             }}
           />
         </div>
+        {/* Username */}
         <div className="uId">
           <TextField
             disabled={this.props.isFirstStepAllRight}
@@ -77,7 +79,7 @@ class RegisterFirstStep extends Component {
             value={this.props.username}
             onChange={(e) => this.setUsername(e.target.value)}
             helperText={
-              this.props.isNameCorrect
+              this.props.isUsernameCorrect
                 ? "At least six character"
                 : "Invalid Name or Already taken"
             }
@@ -222,6 +224,14 @@ class RegisterFirstStep extends Component {
             }}
           />
         </div>
+        {this.props.showError ? (
+          <div className="err">
+            <Report />
+            Sorry! Couldn't process this request
+          </div>
+        ) : (
+          ""
+        )}
         <div className="controlBar">
           <Button
             disabled={this.props.isFirstStepAllRight}
