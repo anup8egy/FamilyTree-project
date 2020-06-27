@@ -47,9 +47,10 @@ class UsernameLogin(APIView):
             request.session["email"] = request.data["email"]
         else:
             return Response(
-                {"error": "Provide username/email "}, status=status.HTTP_400_BAD_REQUEST
+                json.dumps({"error": "Provide username/email "}),
+                status=status.HTTP_400_BAD_REQUEST,
             )
-        return Response(status=status.HTTP_200_OK)
+        return Response(json.dumps({"correct": True}), status=status.HTTP_200_OK)
 
 
 def index(req):
