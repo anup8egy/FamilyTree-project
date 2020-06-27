@@ -52,6 +52,11 @@ const useStyles = () => ({
     color: "#afb3d3 !important",
   },
 });
+function getCookie(name) {
+  var value = "; " + document.cookie;
+  var parts = value.split("; " + name + "=");
+  if (parts.length >= 2) return parts.pop().split(";").shift();
+}
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -95,8 +100,13 @@ class Login extends Component {
     let userCredentials;
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (re.test(this.state.user))
-      userCredentials = { email: this.state.userName };
-    else userCredentials = { username: this.state.userName };
+      userCredentials = {
+        email: this.state.userName,
+      };
+    else
+      userCredentials = {
+        username: this.state.userName,
+      };
     fetch("/api/auth", {
       method: "POST",
       headers: {
@@ -122,7 +132,6 @@ class Login extends Component {
           }
         }, 1000);
       })
-
       .catch((err) => {
         this.setState({ userMainError: true });
         this.setState({ isLoading: false });
@@ -149,11 +158,23 @@ class Login extends Component {
     }
   };
   sendPasswordReqtoAPI = () => {
-    let reqData = { password: this.state.password };
+    let csrf_store;
+    if (getCookie("csrftoken")) {
+      csrf_store = getCookie("csrftoken");
+    } else {
+      this.setState({ userMainError: true });
+      this.setState({ isLoading: false });
+      return;
+    }
+    let reqData = {
+      password: this.state.password,
+    };
+    console.log(reqData);
     fetch("/api/auth/password", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-Csrf-Token": csrf_store,
       },
       body: JSON.stringify(reqData),
     })
