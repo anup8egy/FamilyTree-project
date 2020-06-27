@@ -105,8 +105,12 @@ class Login extends Component {
       },
       body: JSON.stringify(userCredentials),
     })
-      .then((val) => val.json())
+      .then((val) => {
+        if(val.status===200) this.setState({isUserCorrect:true})
+        else this.setState({isUserCorrect:false})
+        return val.json()})
       .then((val) => console.log(val))
+      
       .catch((err) => console.log(err));
   };
   handlePassword = () => {
