@@ -12,9 +12,9 @@ import { withStyles } from "@material-ui/core/styles";
 import AnimatedBackground from "../animatedBackground";
 import { Link } from "react-router-dom";
 import Swipe from "react-swipeable-views";
-import {Helmet} from "react-helmet"
+import { Helmet } from "react-helmet";
 // Icons
-import { Person } from "@material-ui/icons";
+import { Person, Report, VpnKey } from "@material-ui/icons";
 // Pics
 import UserLogo from "../../pics/password.png";
 import KeyLogo from "../../pics/smart-key.png";
@@ -67,6 +67,8 @@ class Login extends Component {
     isUserFieldDisabled: false,
     isPasswordFieldDisbaled: false,
     isLoginRememberChecked: true,
+    userMainError: false,
+    passwordMainError: false,
   };
   handleUserID = () => {
     // To show loader on top
@@ -84,20 +86,17 @@ class Login extends Component {
       // If all Correct then next
       default:
         // Send Request to API
+        this.setState({ isUserFieldDisabled: true });
         this.sendRequestToUserLogin();
-        setTimeout(() => {
-          // this.setState({ isUserFieldDisabled: true });
-          // this.setState({ swipeIndex: 1 });
-          this.setState({ isLoading: false });
-        }, 1000);
         break;
     }
   };
   sendRequestToUserLogin = () => {
-    let userCredentials
+    let userCredentials;
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if(re.test(this.state.username)) userCredentials = { email: this.state.userName };  
-    else userCredentials={username=this.state.userName}  
+    if (re.test(this.state.user))
+      userCredentials = { email: this.state.userName };
+    else userCredentials = { username: this.state.userName };
     fetch("/api/auth", {
       method: "POST",
       headers: {
@@ -106,12 +105,29 @@ class Login extends Component {
       body: JSON.stringify(userCredentials),
     })
       .then((val) => {
-        if(val.status===200) this.setState({isUserCorrect:true})
-        else this.setState({isUserCorrect:false})
-        return val.json()})
-      .then((val) => console.log(val))
-      
-      .catch((err) => console.log(err));
+        if (val.status === 200) this.setState({ isUserCorrect: true });
+        else this.setState({ isUserCorrect: false });
+        return val.json();
+      })
+      .then((val) => {
+        this.setState({ userMainError: false });
+        // if correct username
+        setTimeout(() => {
+          this.setState({ isLoading: false });
+          if (this.state.isUserCorrect) {
+            this.setState({ swipeIndex: 1 });
+          } else {
+            // if wrong
+            this.setState({ isUserFieldDisabled: false });
+          }
+        }, 1000);
+      })
+
+      .catch((err) => {
+        this.setState({ userMainError: true });
+        this.setState({ isLoading: false });
+        this.setState({ isUserFieldDisabled: false });
+      });
   };
   handlePassword = () => {
     // To show loader on top
@@ -128,13 +144,42 @@ class Login extends Component {
         break;
       // If all Correct then next
       default:
-        setTimeout(() => {
-          this.setState({ isPasswordFieldDisbaled: true });
-          this.setState({ isLoading: false });
-          alert("Redirecting to Login Page");
-        }, 1000);
+        this.sendPasswordReqtoAPI();
         break;
     }
+  };
+  sendPasswordReqtoAPI = () => {
+    let reqData = { password: this.state.password };
+    fetch("/api/auth/password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reqData),
+    })
+      .then((resp) => {
+        this.setState({
+          isPasswordCorrect: resp.status === 200 ? true : false,
+        });
+        console.log(resp);
+        return resp.json();
+      })
+      .then((resp) => {
+        console.log(resp);
+        setTimeout(() => {
+          this.setState({ isLoading: false });
+          if (this.state.isPasswordCorrect) {
+            this.setState({ isPasswordFieldDisbaled: true });
+            alert("Redirecting to Login Page");
+          } else {
+            // If wrong
+          }
+        }, 1000);
+      })
+      .catch((err) => {
+        this.setState({ isLoading: false });
+        this.setState({ passwordMainError: true });
+      });
   };
   render() {
     return (
@@ -196,6 +241,14 @@ class Login extends Component {
                 />
                 Keep logged in
               </div>
+              {this.state.userMainError ? (
+                <span className="err">
+                  <Report />
+                  Sorry! Couldn't process the request.
+                </span>
+              ) : (
+                ""
+              )}
               <div className="controlBar">
                 <Button
                   variant="contained"
@@ -234,12 +287,23 @@ class Login extends Component {
                     root: this.classes.textField,
                   }}
                   InputProps={{
+                    type: "password",
                     startAdornment: (
-                      <InputAdornment position="start"></InputAdornment>
+                      <InputAdornment position="start">
+                        <VpnKey />
+                      </InputAdornment>
                     ),
                   }}
                 />
               </div>
+              {this.state.userMainError ? (
+                <span className="err">
+                  <Report />
+                  Sorry! Couldn't process the request.
+                </span>
+              ) : (
+                ""
+              )}
               <div className="controlBar">
                 <Button
                   variant="contained"
@@ -249,9 +313,9 @@ class Login extends Component {
                   Login
                 </Button>
               </div>
-              {/* <div className="accountOptions">
+              <div className="accountOptions">
                 <Link to="/forgot">Forgot password</Link>
-              </div> */}
+              </div>
             </div>
           </Swipe>
         </div>
