@@ -202,7 +202,7 @@ class Login extends Component {
                 </Button>
               </div>
               <div className="accountOptions">
-                <Link to="/forogotAccount">Forgot account</Link>
+                <Link to="/forgot">Forgot account</Link>
                 <Link to="/register">Create Account</Link>
               </div>
             </div>
@@ -245,9 +245,9 @@ class Login extends Component {
                   Login
                 </Button>
               </div>
-              <div className="accountOptions">
-                <Link to="/forogotPassword">Forgot password</Link>
-              </div>
+              {/* <div className="accountOptions">
+                <Link to="/forgot">Forgot password</Link>
+              </div> */}
             </div>
           </Swipe>
         </div>
