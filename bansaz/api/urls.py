@@ -9,5 +9,10 @@ urlpatterns = [
     path("auth", views.UsernameLogin.as_view(), name="username_login"),
     path("auth/password", views.PasswordLogin.as_view(), name="password_login"),
     path("auth/register", views.UserCreate.as_view(), name="user_register"),
+    path(
+        "auth/request-email-verification",
+        views.RequestEmailVerification.as_view(),
+        name="request_email_verification",
+    ),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

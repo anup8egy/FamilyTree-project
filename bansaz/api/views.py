@@ -6,6 +6,12 @@ from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.utils.decorators import method_decorator
 from django.utils.crypto import get_random_string
+from django.core.mail import send_mail, EmailMessage
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from datetime import datetime, timedelta, timezone
+from django.utils.html import strip_tags
 
 # Create your views here.
 from rest_framework import viewsets, status
@@ -88,14 +94,35 @@ class PasswordLogin(APIView):
         return Response(json.dumps({"token": token.key}), status=status.HTTP_200_OK)
 
 
-class RequestEmailVerification(View):
-    @method_decorator(csrf_protect)
+class RequestEmailVerification(APIView):
+    @method_decorator(csrf_exempt)
     def post(self, request):
-        serializer = EmailSerializer(data=request.data)
-        if serializer.is_valid():
-            user = get_object_or_404(User, email=request.data["email"])
-            user.profile.token_code = get_random_string(length=80)
-            user.save()
-            return Response(user.profile.token_code)
+        if "token" in request.data:
+            token = get_object_or_404(Token, key=request.data["token"])
+            token.user.profile.token_code = get_random_string(length=80)
+            token.user.profile.token_expiration = datetime.now(
+                timezone.utc
+            ) + timedelta(days=1)
+            token.user.profile.save()
+            html_message = render_to_string(
+                "email.html",
+                {
+                    "user": token.user,
+                    "domain": "localhost:8000",
+                    "uid": urlsafe_base64_encode(force_bytes(token.user.pk)),
+                    "token": token.user.profile.token_code,
+                },
+            )
+            send_mail(
+                subject="Subject here",
+                html_message=html_message,
+                from_email="yubraj",
+                message=strip_tags(html_message),
+                recipient_list=["yubraj.bhadnari.hero@gmail.com"],
+                fail_silently=False,
+            )
+            return Response(json.dumps({"token_code": token.user.profile.token_code}))
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
+# {"token":"12ac842661c756826b498b1b3212147191c4057c"}
