@@ -28,7 +28,7 @@ class UserCreate(APIView):
     Creates the user. 
     """
 
-    @method_decorator(csrf_exempt)
+    @method_decorator(csrf_protect)
     def post(self, request, format="json"):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -42,7 +42,7 @@ class UserCreate(APIView):
 
 
 class UsernameLogin(APIView):
-    @method_decorator(csrf_exempt)
+    @method_decorator(csrf_protect)
     def post(self, request, format="json"):
         print(request.data)
         if "username" in request.data:
@@ -95,7 +95,7 @@ class PasswordLogin(APIView):
 
 
 class RequestEmailVerification(APIView):
-    @method_decorator(csrf_exempt)
+    @method_decorator(csrf_protect)
     def post(self, request):
         if "token" in request.data:
             token = get_object_or_404(Token, key=request.data["token"])
@@ -136,7 +136,7 @@ class RequestEmailVerification(APIView):
 
 
 class RequestForgetPasswordVerification(APIView):
-    @method_decorator(csrf_exempt)
+    @method_decorator(csrf_protect)
     def post(self, request):
         if "email" in request.data:
             user = get_object_or_404(User, email=request.data["email"])
