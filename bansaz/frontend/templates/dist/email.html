@@ -7,85 +7,18 @@
     <title>Email Send</title>
     <link href="https://fonts.googleapis.com/css2?family=Jost&display=swap" rel="stylesheet">
     <style>
-        * {
-            font-family: "Jost", sans-serif;
-        }
-
-        a {
-            text-decoration: none;
-            color: white;
-        }
-
-        body,
-        .wrapper {
-            background-color: #16222a;
-            color: #ebe3e3d6;
-        }
-
-        .wrapper {
-            display: grid;
-            align-items: center;
-            justify-items: center;
-            min-height: 400px;
-            align-content: center;
-            grid-gap: 20px;
-        }
-
-        .name {
-            display: flex;
-            justify-content: space-around;
-            font-size: 2em;
-        }
-
-        .congrats {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .congrats {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .welcome {
-            font-size: 1.4em;
-        }
-
-        .confirm {
-            font-size: 1.2em;
-        }
-
         .verificationReason {
             font-size: 0.8em;
         }
 
-        .verify {
-            min-height: 40px;
-            min-width: 80px;
-            background: #235b46;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 40px;
-            border-radius: 1px 10px 0px 20px;
-            cursor: pointer;
-            color: white;
-            font-size: 1.2em;
-        }
+        .verify {}
 
         .verify:hover {
             background: #1e4c3ba3;
             color: #e0e0e0;
         }
 
-        .social {
-            display: flex;
-            min-width: 300px;
-            justify-content: space-evenly;
-            align-items: center;
-        }
+        .social {}
 
         .social_items a:hover {
             color: white;
@@ -102,26 +35,54 @@
     </style>
 </head>
 
-<body>
-    <section class="wrapper">
-        <div class="name">
+<body style="font-family: Jost, sans-serif;">
+    <section style="display: grid;
+    align-items: center;
+    justify-items: center;
+    min-height: 400px;
+    align-content: center;
+    grid-gap: 20px;" class="wrapper">
+
+
+        <div style="display: flex;
+        justify-content: space-around;
+        font-size: 2em;" class="name">
             <span>Logo</span>
             <span>Kul, The Clan App</span>
         </div>
-        <div class="congrats">
-            <span class="welcome">Hi {{ user.username }}</span>
-            <span class="confirm">{{ information }}</span>
+        <div styel="display: flex;
+        flex-direction: column;
+        align-items: center;" class="congrats">
+            <span style="font-size: 1.4em;" class="welcome">Hi {{ user.username }}</span>
+            <span style="font-size: 1.2em;" class="confirm">{{ information }}</span>
         </div>
         <div class="verificationReason">
             {{ reason }}
         </div>
-        <div class="verify">
-            <a href="http://{{ domain }}{% url link uidb64=uid token_code=token %}">{{ button }}</a>
+        <div style="min-height: 40px;
+        min-width: 80px;
+        background: #235b46;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 40px;
+        border-radius: 1px 10px 0px 20px;
+        cursor: pointer;
+        color: white;
+        font-size: 1.2em;" class="verify">
+            <a style=" text-decoration: none; color: white;"
+                href="http://{{ domain }}{% url link uidb64=uid token_code=token %}">{{ button }}</a>
         </div>
-        <div class="social">
+        <div style="            display: flex;
+        min-width: 300px;
+        justify-content: space-evenly;
+        align-items: center;
+" class="social">
             <span> Follow us on:</span>
-            <span class="social_items"><a href="https://www.facebook.com">Facebook</a></span>
-            <span class="social_items"> <a href="https://www.instagram.com.com">Instagram</a></span>
+            <span class="social_items"><a style=" text-decoration: none; color: white;"
+                    href="https://www.facebook.com">Facebook</a></span>
+            <span class="social_items"> <a style=" text-decoration: none; color: white;"
+                    href="https://www.instagram.com.com">Instagram</a></span>
         </div>
 </body>
 </section>
