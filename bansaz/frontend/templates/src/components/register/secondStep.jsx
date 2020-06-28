@@ -4,7 +4,12 @@ import { withStyles, makeStyles } from "@material-ui/core/styles";
 // pics
 import VerifyIcon from "../../pics/verified.png";
 // icons
-import { Drafts, Textsms, Send } from "@material-ui/icons";
+import { Drafts, Textsms, Send, Report } from "@material-ui/icons";
+function getCookie(name) {
+  var value = "; " + document.cookie;
+  var parts = value.split("; " + name + "=");
+  if (parts.length >= 2) return parts.pop().split(";").shift();
+}
 class SecondStep extends Component {
   constructor(props) {
     super(props);
@@ -13,6 +18,8 @@ class SecondStep extends Component {
   }
   state = {
     radioValue: 0,
+    showError: false,
+    isAllRight: false,
   };
   getShortEmail = (value) => {
     let whereisAT = value.indexOf("@");
@@ -25,12 +32,47 @@ class SecondStep extends Component {
   };
   sendMail = () => {
     this.toggleLoader(true);
+    let csrf_store;
+    // If no cookies then stop execution here
+    if (getCookie("csrftoken")) {
+      csrf_store = getCookie("csrftoken");
+    } else {
+      this.setState({ showFirstError: true });
+      this.setState({ isLoading: false });
+      return;
+    }
+    let emailVerParam = { token: this.props.token };
     if (this.state.radioValue === 0) {
       // send mail
-      setTimeout(() => {
-        this.setSwipe(2);
-        this.toggleLoader(false);
-      }, 1000);
+      fetch("/api/auth/request-email-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrf_store,
+        },
+        body: JSON.stringify(emailVerParam),
+      })
+        .then((response) => {
+          if (response.status === 200) this.setState({ isAllRight: true });
+          else this.setState({ isAllRight: false });
+          return response.json();
+        })
+        .then((response) => {
+          setTimeout(() => {
+            this.toggleLoader(false);
+          }, 1000);
+          if (this.state.isAllRight) {
+            this.setSwipe(2);
+          } else {
+            this.setState({ showError: true });
+          }
+        })
+        .catch((err) => {
+          this.setState({ showError: true });
+          setTimeout(() => {
+            this.toggleLoader(false);
+          }, 1000);
+        });
     } else {
       // Send code on phone
     }
@@ -96,6 +138,14 @@ class SecondStep extends Component {
             </div>
           </Tooltip>
         </div>
+        {this.state.showError ? (
+          <div className="err">
+            <Report />
+            Sorry! Couldn't process this request
+          </div>
+        ) : (
+          ""
+        )}
         <div>
           <Fab variant="extended" onClick={this.sendMail}>
             Send

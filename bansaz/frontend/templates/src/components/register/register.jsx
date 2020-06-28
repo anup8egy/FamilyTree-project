@@ -19,6 +19,12 @@ import FirstStep from "./firstStep";
 import SecondStep from "./secondStep";
 import ThirdStep from "./thirdStep";
 import { Helmet } from "react-helmet";
+// To get coookies by name
+function getCookie(name) {
+  var value = "; " + document.cookie;
+  var parts = value.split("; " + name + "=");
+  if (parts.length >= 2) return parts.pop().split(";").shift();
+}
 const useStyles = () => ({
   avatar: {
     height: 150,
@@ -105,6 +111,7 @@ class Login extends Component {
     geoPhoneCode: "",
     isPasswordShown: false,
     showFirstError: false,
+    userToken: "",
   };
 
   // First Step Methods
@@ -193,6 +200,15 @@ class Login extends Component {
     // Check if all were right
     if (allTrue) {
       // Goto Second Step
+      let csrf_store;
+      // If no cookies then stop execution here
+      if (getCookie("csrftoken")) {
+        csrf_store = getCookie("csrftoken");
+      } else {
+        this.setState({ showFirstError: true });
+        this.setState({ isLoading: false });
+        return;
+      }
       let regData = {
         username: this.state.username,
         email: this.state.emailAddress,
@@ -207,6 +223,7 @@ class Login extends Component {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRFToken": csrf_store,
         },
         body: JSON.stringify(regData),
       })
@@ -219,8 +236,9 @@ class Login extends Component {
         .then((response) => {
           // If all right
           // We get token here
-          // console.log(JSON.parse(response));
           if (this.state.isFirstStepAllRight) {
+            // IF right set recieved token here
+            this.setState({ userToken: JSON.parse(response).token });
             this.setState({ showFirstError: false });
             setTimeout(() => {
               this.setState({ swipeIndex: 1 });
@@ -379,6 +397,7 @@ class Login extends Component {
               toggleLoader={this.showHideLoader}
               setSwipe={this.handleSwipe}
               isFirstRight={this.state.isFirstStepAllRight}
+              token={this.state.userToken}
             />
             <ThirdStep
               classlist={this.classes}
