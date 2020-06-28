@@ -169,12 +169,11 @@ class Login extends Component {
     let reqData = {
       password: this.state.password,
     };
-    console.log(reqData);
     fetch("/api/auth/password", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Csrf-Token": csrf_store,
+        "X-CSRFToken": csrf_store,
       },
       body: JSON.stringify(reqData),
     })
@@ -182,11 +181,9 @@ class Login extends Component {
         this.setState({
           isPasswordCorrect: resp.status === 200 ? true : false,
         });
-        console.log(resp);
         return resp.json();
       })
       .then((resp) => {
-        console.log(resp);
         setTimeout(() => {
           this.setState({ isLoading: false });
           if (this.state.isPasswordCorrect) {
@@ -194,6 +191,7 @@ class Login extends Component {
             alert("Redirecting to Login Page");
           } else {
             // If wrong
+            this.setState({ passwordMainError: true });
           }
         }, 1000);
       })

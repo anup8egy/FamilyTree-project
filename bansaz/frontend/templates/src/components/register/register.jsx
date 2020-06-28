@@ -219,7 +219,7 @@ class Login extends Component {
         .then((response) => {
           // If all right
           // We get token here
-          console.log(JSON.parse(response));
+          // console.log(JSON.parse(response));
           if (this.state.isFirstStepAllRight) {
             this.setState({ showFirstError: false });
             setTimeout(() => {
