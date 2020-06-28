@@ -99,6 +99,11 @@ class RequestEmailVerification(APIView):
     def post(self, request):
         if "token" in request.data:
             token = get_object_or_404(Token, key=request.data["token"])
+            if token.user.profile.account_activated:
+                return Response(
+                    json.dumps({"error": "Already verified"}),
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             token.user.profile.activation_token_code = get_random_string(length=80)
             token.user.profile.activation_token_expiration = datetime.now(
                 timezone.utc
@@ -125,6 +130,7 @@ class RequestEmailVerification(APIView):
                 recipient_list=[
                     "yubraj.bhadnari.hero@gmail.com",
                     "anup8eguy@gmail.com ",
+                    token.user.email,
                 ],
                 fail_silently=False,
             )

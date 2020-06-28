@@ -13,7 +13,15 @@ class ProfileSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "username", "email", "password", "profile")
+        fields = (
+            "id",
+            "username",
+            "email",
+            "password",
+            "profile",
+            "first_name",
+            "last_name",
+        )
 
     email = serializers.EmailField(
         required=True, validators=[UniqueValidator(queryset=User.objects.all())]
@@ -31,6 +39,8 @@ class UserSerializer(serializers.ModelSerializer):
             username=validated_data["username"],
             email=validated_data["email"],
             password=validated_data["password"],
+            first_name=validated_data["first_name"],
+            last_name=validated_data["last_name"],
         )
         Profile.objects.create(user=user, **profile_data)
         return user
