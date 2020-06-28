@@ -91,8 +91,10 @@ class Login extends Component {
   state = {
     swipeIndex: 0,
     isLoading: false,
-    name: "hello",
-    isNameCorrect: true,
+    first_name: "hello",
+    last_name: "pd",
+    isFirstNameCorrect: true,
+    isLastNameCorrect: true,
     username: "Bimarsh",
     isUsernameCorrect: true,
     emailAddress: "ello@gmail.co",
@@ -169,7 +171,8 @@ class Login extends Component {
     this.setState({ isLoading: true });
     // Check if Full Name empty
     let requiredParams = [
-      this.state.name,
+      this.state.first_name,
+      this.state.last_name,
       this.state.username,
       this.state.emailAddress,
       this.state.country,
@@ -178,7 +181,8 @@ class Login extends Component {
       this.state.confirmPassword,
     ];
     let fnxParams = [
-      (val) => this.checkName(val),
+      (val) => this.checkFirstName(val),
+      (val) => this.checkLastName(val),
       (val) => this.checkUsername(val),
       (val) => this.checkEmail(val),
       (val) => this.checkCountry(val),
@@ -210,6 +214,8 @@ class Login extends Component {
         return;
       }
       let regData = {
+        first_name: this.state.first_name,
+        last_name: this.state.last_name,
         username: this.state.username,
         email: this.state.emailAddress,
         password: this.state.password,
@@ -247,12 +253,25 @@ class Login extends Component {
             this.setState({ isFirstStepAllRight: true });
           } else {
             // If wrong
+            if (response.hasOwnProperty("first_name"))
+              this.setState({ isFirstNameCorrect: false });
+            if (response.hasOwnProperty("last_name"))
+              this.setState({ isLastNameCorrect: false });
             if (response.hasOwnProperty("email"))
               this.setState({ isEmailCorrect: false });
             if (response.hasOwnProperty("username"))
               this.setState({ isUsernameCorrect: false });
-            if (response.hasOwnProperty("detail"))
-              this.setState({ showFirstError: true });
+            if (response.hasOwnProperty("password"))
+              this.setState({ isPasswordCorrect: false });
+            // Profile error
+            if (response.hasOwnProperty("profile")) {
+              if (response.hasOwnProperty("phone_number"))
+                this.setState({ isPhoneCorrect: false });
+              if (response.hasOwnProperty("country"))
+                this.setState({ isCountryCorrect: false });
+              if (response.hasOwnProperty("detail"))
+                this.setState({ showFirstError: true });
+            }
           }
         })
         .catch(this.setState({ showFirstError: true }));
@@ -265,8 +284,12 @@ class Login extends Component {
     }, 1000);
   };
   // API and All Registration first step Check Here
-  checkName = (name) => {
-    if (name.length < 4) return false;
+  checkFirstName = (name) => {
+    if (name.length < 2) return false;
+    return true;
+  };
+  checkLastName = (name) => {
+    if (name.length < 2) return false;
     return true;
   };
   checkUsername = (userName) => {
@@ -297,7 +320,8 @@ class Login extends Component {
   // To check if any of them is undefined or not written
   registerFxnOnEvent = (index) => {
     let fxns = [
-      (val) => this.setState({ isNameCorrect: val }),
+      (val) => this.setState({ isFirstNameCorrect: val }),
+      (val) => this.setState({ isLastNameCorrect: val }),
       (val) => this.setState({ isUsernameCorrect: val }),
       (val) => this.setState({ isEmailCorrect: val }),
       (val) => this.setState({ isCountryCorrect: val }),
@@ -322,7 +346,8 @@ class Login extends Component {
     }
   };
   // State Handlers
-  handleName = (value) => this.setState({ name: value });
+  handleFirstName = (value) => this.setState({ first_name: value });
+  handleLastName = (value) => this.setState({ last_name: value });
   handleUserName = (value) => this.setState({ username: value });
   handleEmail = (value) => this.setState({ emailAddress: value });
   handleCountry = (countryName) => this.setState({ country: countryName });
@@ -358,8 +383,10 @@ class Login extends Component {
             {/* First Step Regiatration */}
             <FirstStep
               classlist={this.classes}
-              name={this.state.name}
-              isNameCorrect={this.state.isNameCorrect}
+              firstname={this.state.first_name}
+              lastname={this.state.last_name}
+              isFirstNameCorrect={this.state.isFirstNameCorrect}
+              isLastNameCorrect={this.state.isLastNameCorrect}
               emailAddress={this.state.emailAddress}
               isEmailCorrect={this.state.isEmailCorrect}
               country={this.state.country}
@@ -374,7 +401,8 @@ class Login extends Component {
               isFirstStepAllRight={this.state.isFirstStepAllRight}
               geoLocation={this.state.geoLocation}
               geoPhoneCode={this.state.geoPhoneCode}
-              setName={this.handleName}
+              setFirstName={this.handleFirstName}
+              setLastName={this.handleLastName}
               setEmail={this.handleEmail}
               setCountry={this.handleCountry}
               setPhone={this.handlePhone}

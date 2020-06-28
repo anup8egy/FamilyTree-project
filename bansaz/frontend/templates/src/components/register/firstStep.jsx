@@ -23,7 +23,8 @@ const getPhoneCodeFromCountryCode = (countryCode) => {
 class RegisterFirstStep extends Component {
   constructor(props) {
     super(props);
-    this.setName = this.props.setName;
+    this.setFirstName = this.props.setFirstName;
+    this.setLastName = this.props.setLastName;
     this.setEmail = this.props.setEmail;
     this.setCountry = this.props.setCountry;
     this.setPhone = this.props.setPhone;
@@ -52,12 +53,34 @@ class RegisterFirstStep extends Component {
         <div className="uId">
           <TextField
             disabled={this.props.isFirstStepAllRight}
-            label="Full Name"
-            placeholder="Enter Full Name"
-            value={this.props.name}
-            onChange={(e) => this.setName(e.target.value)}
-            helperText={this.props.isNameCorrect ? "" : "Invalid Name"}
-            error={!this.props.isNameCorrect}
+            label="First Name"
+            placeholder="Enter First Name"
+            value={this.props.firstname}
+            onChange={(e) => this.setFirstName(e.target.value)}
+            helperText={this.props.isFirstNameCorrect ? "" : "Invalid Name"}
+            error={!this.props.isFirstNameCorrect}
+            classes={{
+              root: this.props.classlist.textField,
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Person />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </div>
+        {/* Last Name */}
+        <div className="uId">
+          <TextField
+            disabled={this.props.isFirstStepAllRight}
+            label="last Name"
+            placeholder="Enter Last Name"
+            value={this.props.lastname}
+            onChange={(e) => this.setLastName(e.target.value)}
+            helperText={this.props.isLastNameCorrect ? "" : "Invalid Name"}
+            error={!this.props.isLastNameCorrect}
             classes={{
               root: this.props.classlist.textField,
             }}
