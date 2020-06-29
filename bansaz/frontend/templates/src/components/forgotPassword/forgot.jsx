@@ -7,6 +7,7 @@ import {
   InputAdornment,
   Radio,
   LinearProgress,
+  Tooltip,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import AnimatedBackground from "../animatedBackground";
@@ -23,6 +24,7 @@ import {
   FiberManualRecord,
   Send,
   AlternateEmail,
+  Textsms,
 } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 const useStyles = () => ({
@@ -77,6 +79,14 @@ const useStyles = () => ({
   toolTipper: {
     fontSize: "0.8em",
   },
+  buttonDisabled: {
+    color: "#a0a7a09e !important",
+    border: "1px solid rgba(244, 240, 240, 0.23)",
+  },
+  outlined: {
+    border: "1px solid rgba(197, 180, 180, 0.62)",
+    padding: "3px 20px",
+  },
 });
 class ForgotPassword extends Component {
   state = {
@@ -86,6 +96,9 @@ class ForgotPassword extends Component {
     isLoading: false,
     swipeIndex: 0,
   };
+  constructor(props) {
+    super(props);
+  }
   getShortEmail = (value) => {
     let whereisAT = value.indexOf("@");
     let firstPart = value.slice(0, whereisAT < 3 ? whereisAT : 3);
@@ -122,6 +135,13 @@ class ForgotPassword extends Component {
     // Request to API here
     return true;
   };
+  reSendMail = () => {
+    this.setState({ isLoading: true });
+    setTimeout(() => {
+      this.setState({ swipeIndex: 1 });
+      this.setState({ isLoading: false });
+    }, 1000);
+  };
   render() {
     return (
       <section className="login">
@@ -142,7 +162,7 @@ class ForgotPassword extends Component {
                   color: "#dcd2d2",
                   display: "inline-flex",
                   alignItems: "center",
-                  marginTop: 20,
+                  marginTop: 30,
                 }}
               >
                 <FiberManualRecord />
@@ -172,6 +192,10 @@ class ForgotPassword extends Component {
                     root: this.props.classes.textField,
                   }}
                   value={this.state.email}
+                  onKeyUp={(e) => {
+                    e.preventDefault();
+                    if (e.keyCode === 13) this.handleEmail();
+                  }}
                   onChange={(e) => this.setState({ email: e.target.value })}
                   autoFocus
                   InputProps={{
@@ -208,7 +232,7 @@ class ForgotPassword extends Component {
                   src={EmailICon}
                 />
               </div>
-              <div>
+              <div style={{ marginTop: 30 }}>
                 <Button
                   variant="outlined"
                   classes={{
@@ -231,7 +255,40 @@ class ForgotPassword extends Component {
                   />
                 </Button>
               </div>
-              <div></div>
+              <div>
+                <div>
+                  <Tooltip
+                    title="Unavailable now"
+                    classes={{ tooltip: this.props.classes.toolTipper }}
+                  >
+                    <div>
+                      <Button
+                        variant="outlined"
+                        classes={{
+                          root: this.props.classes.button,
+                          outlined: this.props.classes.outlined,
+                          disabled: this.props.classes.buttonDisabled,
+                        }}
+                        disableRipple
+                        onClick={() =>
+                          this.state.radioValue === 1
+                            ? null
+                            : this.setState({ radioValue: 1 })
+                        }
+                        disabled={true}
+                      >
+                        <Textsms />
+                        Send verification code to +{this.props.phoneCode}
+                        +9779860
+                        <CustomRadio
+                          checked={this.state.radioValue === 1}
+                          name="send"
+                        />
+                      </Button>
+                    </div>
+                  </Tooltip>
+                </div>
+              </div>
               <div style={{ justifySelf: "flex-end", marginRight: 10 }}>
                 <Fab variant="extended" onClick={this.sendMail}>
                   Send
@@ -260,10 +317,7 @@ class ForgotPassword extends Component {
               </div>
               <span style={{ display: "flex", alignItems: "center" }}>
                 Didn't recieve mail.
-                <Button
-                  color="primary"
-                  onClick={this.setState({ swipeIndex: 1 })}
-                >
+                <Button color="primary" onClick={this.reSendMail}>
                   Resend
                 </Button>
               </span>

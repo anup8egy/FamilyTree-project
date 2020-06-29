@@ -97,9 +97,21 @@ class Login extends Component {
     }
   };
   sendRequestToUserLogin = () => {
+    // Disabled all fields when entered
+    this.setState({ isUserFieldDisabled: true });
+    let csrf_store;
+    // If no cookies then stop execution here
+    if (getCookie("csrftoken")) {
+      csrf_store = getCookie("csrftoken");
+    } else {
+      this.setState({ showFirstError: true });
+      this.setState({ isLoading: false });
+      this.setState({ isUserFieldDisabled: false });
+      return;
+    }
     let userCredentials;
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (re.test(this.state.user))
+    if (re.test(this.state.userName))
       userCredentials = {
         email: this.state.userName,
       };
@@ -111,6 +123,7 @@ class Login extends Component {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-CSRFToken": csrf_store,
       },
       body: JSON.stringify(userCredentials),
     })
@@ -158,12 +171,14 @@ class Login extends Component {
     }
   };
   sendPasswordReqtoAPI = () => {
+    this.setState({ isPasswordFieldDisbaled: true });
     let csrf_store;
     if (getCookie("csrftoken")) {
       csrf_store = getCookie("csrftoken");
     } else {
       this.setState({ userMainError: true });
       this.setState({ isLoading: false });
+      this.setState({ isPasswordFieldDisbaled: false });
       return;
     }
     let reqData = {
@@ -187,10 +202,13 @@ class Login extends Component {
         setTimeout(() => {
           this.setState({ isLoading: false });
           if (this.state.isPasswordCorrect) {
+            // IF data remember checked then remeber otherwise dont remember
+            this.setAuthCookie(JSON.parse(resp).token);
             this.setState({ isPasswordFieldDisbaled: true });
             alert("Redirecting to Login Page");
           } else {
             // If wrong
+            this.setState({ isPasswordFieldDisbaled: false });
             this.setState({ passwordMainError: true });
           }
         }, 1000);
@@ -198,7 +216,16 @@ class Login extends Component {
       .catch((err) => {
         this.setState({ isLoading: false });
         this.setState({ passwordMainError: true });
+        this.setState({ isPasswordFieldDisbaled: false });
       });
+  };
+  setAuthCookie = (token) => {
+    if (this.state.isLoginRememberChecked) {
+      let date = new Date();
+      date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000);
+      document.cookie = `__kul_ri=${token};expires=${date.toGMTString()};path="/";sameSite=Lax;`;
+    } else
+      document.cookie = `__kul_ri=${token};eexpires=0;path="/";sameSite=Lax;`;
   };
   render() {
     return (
@@ -234,6 +261,10 @@ class Login extends Component {
                     root: this.classes.textField,
                   }}
                   value={this.state.userName}
+                  onKeyUp={(e) => {
+                    e.preventDefault();
+                    if (e.keyCode === 13) this.handleUserID();
+                  }}
                   onChange={(e) => this.setState({ userName: e.target.value })}
                   autoFocus
                   InputProps={{
@@ -272,6 +303,7 @@ class Login extends Component {
                 <Button
                   variant="contained"
                   color="primary"
+                  disabled={this.state.isUserFieldDisabled}
                   onClick={this.handleUserID}
                 >
                   Next
@@ -299,6 +331,10 @@ class Login extends Component {
                   }
                   error={!this.state.isPasswordCorrect}
                   value={this.state.password}
+                  onKeyUp={(e) => {
+                    e.preventDefault();
+                    if (e.keyCode === 13) this.handlePassword();
+                  }}
                   onChange={(e) => this.setState({ password: e.target.value })}
                   label="Password"
                   placeholder="Enter Password"
@@ -327,6 +363,7 @@ class Login extends Component {
                 <Button
                   variant="contained"
                   color="primary"
+                  disabled={this.state.isPasswordFieldDisbaled}
                   onClick={this.handlePassword}
                 >
                   Login

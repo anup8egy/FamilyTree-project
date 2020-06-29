@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Avatar, Button, Fab, Radio, Tooltip } from "@material-ui/core";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 // pics
 import VerifyIcon from "../../pics/verified.png";
 // icons
