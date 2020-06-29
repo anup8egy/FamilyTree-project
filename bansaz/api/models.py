@@ -271,7 +271,7 @@ class Profile(models.Model):
         ("Zimbabwe", "Zimbabwe"),
     ]
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
-    country = models.CharField(max_length=2, choices=COUNTRY_CHOICES, default="NP")
+    country = models.CharField(max_length=100, choices=COUNTRY_CHOICES, default="NP")
 
     phone_regex = RegexValidator(
         regex=r"^\+?1?\d{9,15}$",
