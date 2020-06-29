@@ -134,11 +134,7 @@ class RequestEmailVerification(APIView):
                 html_message=html_message,
                 from_email="The kul app",
                 message=strip_tags(html_message),
-                recipient_list=[
-                    "yubraj.bhadnari.hero@gmail.com",
-                    "anup8eguy@gmail.com ",
-                    token.user.email,
-                ],
+                recipient_list=[token.user.email,],
                 fail_silently=False,
             )
             return Response(
