@@ -33,6 +33,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     profile = ProfileSerializer()
 
+    def validate_username(self, value):
+        if " " in value:
+            return serializers.ValidationError("username shouldnot contain <space>")
+        return value
+
     def create(self, validated_data):
         profile_data = validated_data.pop("profile")
         user = User.objects.create_user(
