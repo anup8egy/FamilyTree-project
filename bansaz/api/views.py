@@ -28,6 +28,8 @@ class UserCreate(APIView):
     Creates the user. 
     """
 
+    throttle_scope = "register"
+
     @method_decorator(csrf_protect)
     def post(self, request, format="json"):
         serializer = UserSerializer(data=request.data)
@@ -42,8 +44,13 @@ class UserCreate(APIView):
 
 
 class UsernameLogin(APIView):
-    @method_decorator(csrf_protect)
+    @method_decorator(csrf_exempt)
     def post(self, request, format="json"):
+        if request.user.is_authenticated:
+            return Response(
+                json.dumps({"Error": "Already Authenticated"}),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         print(request.data)
         if "username" in request.data:
             get_object_or_404(User, username=request.data["username"])
@@ -53,23 +60,21 @@ class UsernameLogin(APIView):
             request.session["email"] = request.data["email"]
         else:
             return Response(
-                json.dumps({"error": "Provide username/email "}),
+                json.dumps({"Error": "Provide username/email "}),
                 status=status.HTTP_400_BAD_REQUEST,
             )
         return Response(json.dumps({"correct": True}), status=status.HTTP_200_OK)
 
 
-def index(req):
-    return HttpResponse("<h1> Hello World from Django</h1>")
-
-
-def new(req):
-    return HttpResponse("ok works")
-
-
 class PasswordLogin(APIView):
-    @method_decorator(csrf_protect)
+    @method_decorator(csrf_exempt)
     def post(self, request, format="json"):
+        if request.user.is_authenticated:
+            return Response(
+                json.dumps({"Error": "Already Authenticated"}),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if (not ("username" in request.session or "email" in request.session)) or (
             not "password" in request.data
         ):
@@ -95,6 +100,8 @@ class PasswordLogin(APIView):
 
 
 class RequestEmailVerification(APIView):
+    throttle_scope = "forget_password"
+
     @method_decorator(csrf_protect)
     def post(self, request):
         if "token" in request.data:
@@ -142,6 +149,8 @@ class RequestEmailVerification(APIView):
 
 
 class RequestForgetPasswordVerification(APIView):
+    throttle_scope = "forget_password"
+
     @method_decorator(csrf_protect)
     def post(self, request):
         if "email" in request.data:
