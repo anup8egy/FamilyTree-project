@@ -9,6 +9,10 @@ from django.contrib.auth.models import User
 from datetime import datetime, timezone
 from api.models import Profile
 
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.response import Response
+
 # Create your views here.
 
 
@@ -17,7 +21,7 @@ class FrontEndView(generic.TemplateView):
     template_name = "index.html"
 
 
-class EmailVerification(View):
+class EmailVerification(APIView):
     def get(self, request, uidb64, token_code):
         try:
             uid = force_text(urlsafe_base64_decode(uidb64))
@@ -34,10 +38,13 @@ class EmailVerification(View):
             user.profile.activation_token_expiration = datetime.now(timezone.utc)
             user.profile.save()
             return redirect("/register")
-        return HttpResponse("Activation link is invalid! or the link is stale")
+        return Response(
+            "Activation link is invalid! or the link is stale",
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
-class ForgetPasswordVerification(View):
+class ForgetPasswordVerification(APIView):
     def get(self, request, uidb64, token_code):
         return render(
             request,
@@ -56,12 +63,12 @@ class ForgetPasswordVerification(View):
             user.profile.forget_password_token_code == token_code
             and user.profile.forget_password_token_expiration
             > datetime.now(timezone.utc)
-            and "password" in request.POST
+            and "password" in request.data
         ):
-            user.set_password(request.POST["password"])
+            user.set_password(request.data["password"])
             user.save()
             user.profile.forget_password_token_code = ""
             user.profile.forget_password_token_expiration = datetime.now(timezone.utc)
             user.profile.save()
             return redirect("/login")
-        return HttpResponse("Error.")
+        return Response("Error.", status=status.HTTP_400_BAD_REQUEST)

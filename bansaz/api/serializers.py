@@ -27,11 +27,16 @@ class UserSerializer(serializers.ModelSerializer):
         required=True, validators=[UniqueValidator(queryset=User.objects.all())]
     )
     username = serializers.CharField(
-        validators=[UniqueValidator(queryset=User.objects.all())]
+        validators=[UniqueValidator(queryset=User.objects.all())], min_length=6
     )
     password = serializers.CharField(min_length=8)
 
     profile = ProfileSerializer()
+
+    def validate_username(self, value):
+        if " " in value:
+            return serializers.ValidationError("username shouldnot contain <space>")
+        return value
 
     def create(self, validated_data):
         profile_data = validated_data.pop("profile")
