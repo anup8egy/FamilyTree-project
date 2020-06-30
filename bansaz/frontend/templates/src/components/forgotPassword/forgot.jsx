@@ -2,12 +2,10 @@ import React, { Component } from "react";
 import {
   Avatar,
   Button,
-  Fab,
   TextField,
   InputAdornment,
   Radio,
   LinearProgress,
-  Tooltip,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import AnimatedBackground from "../animatedBackground";
@@ -15,17 +13,10 @@ import Swipe from "react-swipeable-views";
 import { Helmet } from "react-helmet";
 import "../../style/login.css";
 // pics
-import EmailICon from "../../pics/email.png";
 import ForgotIcon from "../../pics/risk.png";
 import DoneIcon from "../../pics/correct.png";
 // icons
-import {
-  Drafts,
-  FiberManualRecord,
-  Send,
-  AlternateEmail,
-  Textsms,
-} from "@material-ui/icons";
+import { FiberManualRecord, AlternateEmail, Report } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 const useStyles = () => ({
   avatar: {
@@ -95,28 +86,16 @@ class ForgotPassword extends Component {
     isMailCorrect: true,
     isLoading: false,
     swipeIndex: 0,
+    showMailError: false,
+    showResendError: false,
   };
-  constructor(props) {
-    super(props);
-  }
   getShortEmail = (value) => {
     let whereisAT = value.indexOf("@");
     let firstPart = value.slice(0, whereisAT < 3 ? whereisAT : 3);
     let secondPart = value.slice(whereisAT, value.length);
     return `${firstPart}...${secondPart}`;
   };
-  sendMail = () => {
-    this.setState({ isLoading: true });
-    if (this.state.radioValue === 0) {
-      // send mail
-      setTimeout(() => {
-        this.setState({ swipeIndex: 2 });
-        this.setState({ isLoading: false });
-      }, 1000);
-    } else {
-      // Send code on phone
-    }
-  };
+  sendMail = () => {};
   handleEmail = () => {
     this.setState({ isLoading: true });
     // IF mail check failed
@@ -138,7 +117,6 @@ class ForgotPassword extends Component {
   reSendMail = () => {
     this.setState({ isLoading: true });
     setTimeout(() => {
-      this.setState({ swipeIndex: 1 });
       this.setState({ isLoading: false });
     }, 1000);
   };
@@ -207,6 +185,13 @@ class ForgotPassword extends Component {
                   }}
                 />
               </div>
+              {this.state.showMailError ? (
+                <div className="err">
+                  <Report /> Sorry! Couldn't process the request.{" "}
+                </div>
+              ) : (
+                ""
+              )}
               <div className="controlBar">
                 <Button
                   variant="contained"
@@ -218,82 +203,6 @@ class ForgotPassword extends Component {
               </div>
               <div className="instead">
                 <Link to="/login">Login Instead</Link>
-              </div>
-            </div>
-            {/* Send Email here */}
-            <div className="swipeItem">
-              <div className="Avatar">
-                <Avatar
-                  classes={{
-                    root: this.props.classes.avatar,
-                    img: this.props.classes.img,
-                  }}
-                  alt="USER"
-                  src={EmailICon}
-                />
-              </div>
-              <div style={{ marginTop: 30 }}>
-                <Button
-                  variant="outlined"
-                  classes={{
-                    root: this.props.classes.button,
-                    outlined: this.props.classes.outlined,
-                  }}
-                  onClick={() =>
-                    this.state.radioValue === 0
-                      ? null
-                      : this.setState({ radioValue: 0 })
-                  }
-                  disableRipple
-                >
-                  <Drafts />
-                  Send verification code to:
-                  {this.getShortEmail(this.state.email)}
-                  <CustomRadio
-                    checked={this.state.radioValue === 0}
-                    name="send"
-                  />
-                </Button>
-              </div>
-              <div>
-                <div>
-                  <Tooltip
-                    title="Unavailable now"
-                    classes={{ tooltip: this.props.classes.toolTipper }}
-                  >
-                    <div>
-                      <Button
-                        variant="outlined"
-                        classes={{
-                          root: this.props.classes.button,
-                          outlined: this.props.classes.outlined,
-                          disabled: this.props.classes.buttonDisabled,
-                        }}
-                        disableRipple
-                        onClick={() =>
-                          this.state.radioValue === 1
-                            ? null
-                            : this.setState({ radioValue: 1 })
-                        }
-                        disabled={true}
-                      >
-                        <Textsms />
-                        Send verification code to +{this.props.phoneCode}
-                        +9779860
-                        <CustomRadio
-                          checked={this.state.radioValue === 1}
-                          name="send"
-                        />
-                      </Button>
-                    </div>
-                  </Tooltip>
-                </div>
-              </div>
-              <div style={{ justifySelf: "flex-end", marginRight: 10 }}>
-                <Fab variant="extended" onClick={this.sendMail}>
-                  Send
-                  <Send />
-                </Fab>
               </div>
             </div>
             {/* Email sent and resend here */}
@@ -321,6 +230,13 @@ class ForgotPassword extends Component {
                   Resend
                 </Button>
               </span>
+              {this.state.showResendError ? (
+                <div className="err">
+                  <Report /> Sorry! Couldn't process the request.{" "}
+                </div>
+              ) : (
+                ""
+              )}
               <span>
                 <span style={{ fontSize: "1em" }}>Note:</span>
                 <span style={{ fontSize: "0.8em" }}>
