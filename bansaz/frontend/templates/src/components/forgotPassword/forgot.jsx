@@ -79,6 +79,11 @@ const useStyles = () => ({
     padding: "3px 20px",
   },
 });
+function getCookie(name) {
+  var value = "; " + document.cookie;
+  var parts = value.split("; " + name + "=");
+  if (parts.length >= 2) return parts.pop().split(";").shift();
+}
 class ForgotPassword extends Component {
   state = {
     radioValue: 0,
@@ -89,21 +94,16 @@ class ForgotPassword extends Component {
     showMailError: false,
     showResendError: false,
   };
-  getShortEmail = (value) => {
-    let whereisAT = value.indexOf("@");
-    let firstPart = value.slice(0, whereisAT < 3 ? whereisAT : 3);
-    let secondPart = value.slice(whereisAT, value.length);
-    return `${firstPart}...${secondPart}`;
-  };
   sendMail = () => {};
   handleEmail = () => {
     this.setState({ isLoading: true });
-    // IF mail check failed
-    if (!this.checkMail()) {
-      this.setState({ isMailCorrect: false });
-    } else {
+    if (this.checkMail()) {
+      // IF mail check correct
       this.setState({ isMailCorrect: true });
       this.setState({ swipeIndex: 1 });
+    } else {
+      // IF mail check failed
+      this.setState({ isMailCorrect: false });
     }
     setTimeout(() => this.setState({ isLoading: false }), 1000);
   };
@@ -112,6 +112,21 @@ class ForgotPassword extends Component {
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!re.test(this.state.email)) return false;
     // Request to API here
+    let apiFetchData = { email: this.state.email };
+    fetch("/api/auth/request-forget-password-verification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      body: JSON.stringify(apiFetchData),
+    })
+      .then((response) => {
+        console.log(response);
+        return response.json();
+      })
+      .then((resp) => console.log(resp))
+      .catch((err) => console.log(err));
     return true;
   };
   reSendMail = () => {

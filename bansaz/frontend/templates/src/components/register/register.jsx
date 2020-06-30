@@ -237,6 +237,7 @@ class Login extends Component {
           if (response.status === 201) {
             this.setState({ isFirstStepAllRight: true });
           }
+          console.log(response);
           return response.json();
         })
         .then((response) => {
@@ -265,13 +266,15 @@ class Login extends Component {
               this.setState({ isPasswordCorrect: false });
             // Profile error
             if (response.hasOwnProperty("profile")) {
-              if (response.hasOwnProperty("phone_number"))
+              if (response.profile.hasOwnProperty("phone_number"))
                 this.setState({ isPhoneCorrect: false });
-              if (response.hasOwnProperty("country"))
+              if (response.profile.hasOwnProperty("country"))
                 this.setState({ isCountryCorrect: false });
-              if (response.hasOwnProperty("detail"))
+              if (response.profile.hasOwnProperty("detail"))
                 this.setState({ showFirstError: true });
             }
+            if (response.hasOwnProperty("detail"))
+              this.setState({ showFirstError: true });
           }
         })
         .catch(this.setState({ showFirstError: true }));
