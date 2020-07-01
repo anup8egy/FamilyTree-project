@@ -164,6 +164,7 @@ class ForgotPassword extends Component {
         });
     } else {
       // IF mail check failed
+      this.setState({ isMailSending: false });
       this.setState({ isLoading: false });
       this.setState({ isMailCorrect: false });
     }

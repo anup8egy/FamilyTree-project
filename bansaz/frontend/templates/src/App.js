@@ -12,20 +12,23 @@ class App extends Component {
   render() {
     return (
       <React.Fragment>
-        <NavBar />
         <Router>
           <RouteChange />
           <Switch>
             <Route exact path="/">
+              <NavBar />
               <LandingPage />
             </Route>
             <Route exact path="/login">
+              <NavBar />
               <Loginpage />
             </Route>
             <Route exact path="/register">
+              <NavBar />
               <RegisterPage />
             </Route>
             <Route exact path="/forgot">
+              <NavBar />
               <ForgotPassword />
             </Route>
             <Route path="*">
