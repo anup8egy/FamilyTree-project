@@ -60,7 +60,7 @@ REST_FRAMEWORK = {
         "anon": "100/day",
         "user": "1000/day",
         "register": "20/hour",
-        "forget_password": "3/day",
+        "forget_password": "200/day",
     },
 }
 MIDDLEWARE = [

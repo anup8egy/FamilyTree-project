@@ -88,52 +88,92 @@ class ForgotPassword extends Component {
   state = {
     radioValue: 0,
     email: "",
+    isSendCorrect: true,
     isMailCorrect: true,
     isLoading: false,
     swipeIndex: 0,
     showMailError: false,
     showResendError: false,
+    isMailSending: false,
+    isReMailSending: false,
   };
-  sendMail = () => {};
-  handleEmail = () => {
+  handleEmail = (method) => {
     this.setState({ isLoading: true });
+    if (method === "resend") {
+      this.setState({ isReMailSending: true });
+    } else {
+      this.setState({ isMailSending: true });
+    }
     if (this.checkMail()) {
       // IF mail check correct
-      this.setState({ isMailCorrect: true });
-      this.setState({ swipeIndex: 1 });
+      let apiFetchData = { email: this.state.email };
+      fetch("/api/auth/request-forget-password-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify(apiFetchData),
+      })
+        .then((response) => {
+          // Disable all
+          if (response.status === 200) {
+            this.setState({ isSendCorrect: true });
+          } else if (response.status === 404) {
+            this.setState({ isMailCorrect: false });
+            this.setState({ isSendCorrect: false });
+          } else {
+            this.setState({ isSendCorrect: false });
+            if (method === "resend") {
+              this.setState({ showResendError: true });
+            } else {
+              this.setState({ showMailError: true });
+            }
+          }
+          return response.json();
+        })
+        .then((resp) => {
+          this.setState({isReMailSending:false})
+          setTimeout(() => {
+            setTimeout(() => this.setState({ isLoading: false }), 1000);
+            if (this.state.isSendCorrect) {
+              // If everything is right
+              if (method === "resend") {
+                this.setState({ showResendError: false });
+              } else {
+                this.setState({ showMailError: false });
+                this.setState({ swipeIndex: 1 });
+              }
+              this.setState({ isMailCorrect: true });
+
+              if (method !== "resend") this.setState({ swipeIndex: 1 });
+            } else {
+              if (method === "resend") {
+                this.setState({ isReMailSending: false });
+              } else {
+                this.setState({ isMailSending: false });
+              }
+            }
+          }, 1000);
+        })
+        .catch((err) => {
+          this.setState({ isReMailSending: false });
+          this.setState({ isMailSending: false });
+          this.setState({ showMailError: true });
+          this.setState({ isLoading: false });
+        });
     } else {
       // IF mail check failed
+      this.setState({ isLoading: false });
       this.setState({ isMailCorrect: false });
     }
-    setTimeout(() => this.setState({ isLoading: false }), 1000);
   };
   checkMail = () => {
     // Check mail regex
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!re.test(this.state.email)) return false;
     // Request to API here
-    let apiFetchData = { email: this.state.email };
-    fetch("/api/auth/request-forget-password-verification", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("csrftoken"),
-      },
-      body: JSON.stringify(apiFetchData),
-    })
-      .then((response) => {
-        console.log(response);
-        return response.json();
-      })
-      .then((resp) => console.log(resp))
-      .catch((err) => console.log(err));
     return true;
-  };
-  reSendMail = () => {
-    this.setState({ isLoading: true });
-    setTimeout(() => {
-      this.setState({ isLoading: false });
-    }, 1000);
   };
   render() {
     return (
@@ -180,6 +220,7 @@ class ForgotPassword extends Component {
                       ? ""
                       : "This email is'nt associated with Kul"
                   }
+                  disabled={this.state.isMailSending}
                   error={!this.state.isMailCorrect}
                   classes={{
                     root: this.props.classes.textField,
@@ -187,7 +228,7 @@ class ForgotPassword extends Component {
                   value={this.state.email}
                   onKeyUp={(e) => {
                     e.preventDefault();
-                    if (e.keyCode === 13) this.handleEmail();
+                    if (e.keyCode === 13) this.handleEmail("send");
                   }}
                   onChange={(e) => this.setState({ email: e.target.value })}
                   autoFocus
@@ -211,7 +252,8 @@ class ForgotPassword extends Component {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={this.handleEmail}
+                  onClick={() => this.handleEmail("send")}
+                  disabled={this.state.isMailSending}
                 >
                   Next
                 </Button>
@@ -241,7 +283,11 @@ class ForgotPassword extends Component {
               </div>
               <span style={{ display: "flex", alignItems: "center" }}>
                 Didn't recieve mail.
-                <Button color="primary" onClick={this.reSendMail}>
+                <Button
+                  color="primary"
+                  onClick={() => this.handleEmail("resend")}
+                  disabled={this.state.isReMailSending}
+                >
                   Resend
                 </Button>
               </span>
@@ -258,7 +304,11 @@ class ForgotPassword extends Component {
                   Maximum 5 password reset mails per day.
                 </span>
               </span>
-              <Button variant="contained" color="primary">
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={this.state.isReMailSending}
+              >
                 <Link to="/login">Login</Link>
               </Button>
             </div>

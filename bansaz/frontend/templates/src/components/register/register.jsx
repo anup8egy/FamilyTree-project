@@ -91,22 +91,22 @@ class Login extends Component {
   state = {
     swipeIndex: 0,
     isLoading: false,
-    first_name: "hello",
-    last_name: "pd",
+    first_name: "",
+    last_name: "",
     isFirstNameCorrect: true,
     isLastNameCorrect: true,
-    username: "Bimarsh",
+    username: "",
     isUsernameCorrect: true,
-    emailAddress: "ello@gmail.co",
+    emailAddress: "",
     isEmailCorrect: true,
-    country: "Nepal",
+    country: "",
     isCountryCorrect: true,
-    countryPhoneCode: "977",
-    phone: "9860072324",
+    countryPhoneCode: "",
+    phone: "",
     isPhoneCorrect: true,
-    password: "nepal123",
+    password: "",
     isPasswordCorrect: true,
-    confirmPassword: "nepal123",
+    confirmPassword: "",
     isConfirmPasswordCorrect: true,
     isFirstStepAllRight: false,
     geoLocation: "",
@@ -237,7 +237,6 @@ class Login extends Component {
           if (response.status === 201) {
             this.setState({ isFirstStepAllRight: true });
           }
-          console.log(response);
           return response.json();
         })
         .then((response) => {
