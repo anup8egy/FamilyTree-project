@@ -37,7 +37,7 @@ class EmailVerification(APIView):
             user.profile.activation_token_code = ""
             user.profile.activation_token_expiration = datetime.now(timezone.utc)
             user.profile.save()
-            return redirect("/register")
+            return redirect("/login")
         return Response(
             "Activation link is invalid! or the link is stale",
             status=status.HTTP_400_BAD_REQUEST,
@@ -57,7 +57,7 @@ class ForgetPasswordVerification(APIView):
             uid = force_text(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
         except:
-            return HttpResponse("Error.")
+            return Response("Error.")
 
         if (
             user.profile.forget_password_token_code == token_code
