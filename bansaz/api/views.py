@@ -18,6 +18,7 @@ from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
 
 from .serializers import UserSerializer
 from django.contrib.auth.models import User
@@ -44,7 +45,7 @@ class UserCreate(APIView):
 
 
 class UsernameLogin(APIView):
-    @method_decorator(csrf_exempt)
+    @method_decorator(csrf_protect)
     def post(self, request, format="json"):
         if request.user.is_authenticated:
             return Response(
@@ -67,7 +68,7 @@ class UsernameLogin(APIView):
 
 
 class PasswordLogin(APIView):
-    @method_decorator(csrf_exempt)
+    @method_decorator(csrf_protect)
     def post(self, request, format="json"):
         if request.user.is_authenticated:
             return Response(
@@ -185,3 +186,15 @@ class RequestForgetPasswordVerification(APIView):
 
 
 # {"token":"58ffd467269200fc56e915f2285c1833a79bc8d4"}
+""" Registration Completed (Oauth and Captcha left )"""
+
+
+class UserDashboardData(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @method_decorator(csrf_protect)
+    def post(self, request):
+        return Response(
+            json.dumps({"User Data Provided": True}), status=status.HTTP_200_OK
+        )
+
