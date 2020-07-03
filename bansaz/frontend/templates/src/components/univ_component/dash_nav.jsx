@@ -11,7 +11,9 @@ import {
   Tooltip,
   Zoom,
   Menu,
-  MenuItem,
+  ExpansionPanel,
+  ExpansionPanelSummary,
+  ExpansionPanelDetails,
 } from "@material-ui/core";
 import {
   Menu as MenuIcon,
@@ -24,6 +26,8 @@ import {
   Search as SearchIcon,
   ArrowDropDown as DownIcon,
   Notifications as NotificationIcon,
+  NavigateNext as RightArrowIcon,
+  ExpandMore as ExpandMoreIcon,
 } from "@material-ui/icons";
 // Profile Pic
 import SampleProfilePic from "../../pics/sample_profile.jpg";
@@ -37,7 +41,7 @@ class NavBar_Dash extends Component {
     this.screenCheck();
   }
   screenCheck = () => {
-    var isMobileWidth = window.matchMedia("(max-width: 500px)");
+    var isMobileWidth = window.matchMedia("(max-width: 550px)");
     if (isMobileWidth.matches) this.setState({ isMobileDevice: true });
     else this.setState({ isMobileDevice: false });
     isMobileWidth.addListener(this.screenCheck);
@@ -120,20 +124,46 @@ const useStyles = () => ({
     width: 250,
     padding: "2px 10px",
   },
+  createPaper: {
+    background: "#1c1b1bf2",
+    width: 250,
+    padding: "2px 10px",
+  },
   profilePaperList: {
     display: "grid",
     gridGap: 3,
     alignContent: "center",
     justifyItems: "center",
   },
+  mob_nav_create_drop: {
+    width: "95%",
+    minHeight: 50,
+    background: "#151515ed",
+    color: "#b9b5b5",
+    fontSize: "1.1em",
+    borderRadius: 10,
+    padding: "5px 0px",
+    fontSize: "0.9em",
+  },
+  mob_expanded_root: {
+    position: "relative",
+    background: "#1a1a1a",
+    zIndex: 5,
+  },
 });
 // Mobile Version
 class MobileNavBar extends Component {
   state = {
     isMenuOpen: false,
+    isNotificationsOpen: false,
+    anchorNotification: null,
   };
   handleMenu = (bool_status) => {
     this.setState({ isMenuOpen: Boolean(bool_status) });
+  };
+  handleDropDownNotification = (e) => {
+    this.setState({ anchorNotification: e.currentTarget });
+    this.setState({ isNotificationsOpen: true });
   };
   render() {
     return (
@@ -164,6 +194,7 @@ class MobileNavBar extends Component {
             <ProfileContent_Nav {...this.props} mobile={true} />
           </Drawer>
         </div>
+        {/* App bar of Mobile */}
         <AppBar
           position="static"
           classes={{ root: this.props.classes.deskroot }}
@@ -174,11 +205,65 @@ class MobileNavBar extends Component {
                 <MenuIcon className="menuIcon" />
               </IconButton>
             </div>
+            {/* Mobile notification */}
             <div className="searchBar">
               <input type="text" placeholder="Search..." />
+              <div className="desktop_nav_icons mobile_notification">
+                <Tooltip
+                  title="Notifications"
+                  arrow
+                  TransitionComponent={Zoom}
+                  classes={{ tooltip: this.props.classes.desk_nav_tooltip }}
+                >
+                  <IconButton onClick={this.handleDropDownNotification}>
+                    <Avatar
+                      classes={{ root: this.props.classes.desktopnavAvatar }}
+                    >
+                      <Badge
+                        badgeContent={4}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
+                        max={99}
+                        color="primary"
+                        classes={{
+                          colorPrimary: this.props.classes.notificationBadge,
+                        }}
+                      >
+                        <NotificationIcon />
+                      </Badge>
+                    </Avatar>
+                  </IconButton>
+                </Tooltip>
+              </div>
               <div className="search"></div>
             </div>
           </Toolbar>
+          {/* mobile Notification Bar is here */}
+          <Menu
+            anchorEl={this.state.anchorNotification}
+            keepMounted
+            open={this.state.isNotificationsOpen}
+            onClose={() => this.setState({ isNotificationsOpen: false })}
+            TransitionComponent={Zoom}
+            elevation={0}
+            getContentAnchorEl={null}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            classes={{
+              paper: this.props.classes.profilePaper,
+              list: this.props.classes.profilePaperList,
+            }}
+          >
+            <Notification_DropDown {...this.props} />
+          </Menu>
         </AppBar>
       </div>
     );
@@ -198,6 +283,14 @@ class DesktopnavBar extends Component {
   handleDropDownOpenClose = (e) => {
     this.setState({ anchorDropDown: e.currentTarget });
     this.setState({ isDropDownOpen: true });
+  };
+  handleDropDownCreate = (e) => {
+    this.setState({ anchorCreate: e.currentTarget });
+    this.setState({ isCreateOpen: true });
+  };
+  handleDropDownNotification = (e) => {
+    this.setState({ anchorNotification: e.currentTarget });
+    this.setState({ isNotificationsOpen: true });
   };
   render() {
     return (
@@ -228,13 +321,16 @@ class DesktopnavBar extends Component {
                 TransitionComponent={Zoom}
                 classes={{ tooltip: this.props.classes.desk_nav_tooltip }}
               >
-                <Link to="/create" className="desktop_nav_icons">
+                <IconButton
+                  className="desktop_nav_icons"
+                  onClick={this.handleDropDownCreate}
+                >
                   <Avatar
                     classes={{ root: this.props.classes.desktopnavAvatar }}
                   >
                     <AddIcon />
                   </Avatar>
-                </Link>
+                </IconButton>
               </Tooltip>
             </div>
             {/* Notifications Desktop */}
@@ -245,7 +341,7 @@ class DesktopnavBar extends Component {
                 TransitionComponent={Zoom}
                 classes={{ tooltip: this.props.classes.desk_nav_tooltip }}
               >
-                <IconButton>
+                <IconButton onClick={this.handleDropDownNotification}>
                   <Avatar
                     classes={{ root: this.props.classes.desktopnavAvatar }}
                   >
@@ -298,11 +394,11 @@ class DesktopnavBar extends Component {
           getContentAnchorEl={null}
           anchorOrigin={{
             vertical: "bottom",
-            horizontal: "center",
+            horizontal: "left",
           }}
           transformOrigin={{
             vertical: "top",
-            horizontal: "center",
+            horizontal: "left",
           }}
           classes={{
             paper: this.props.classes.profilePaper,
@@ -310,6 +406,54 @@ class DesktopnavBar extends Component {
           }}
         >
           <ProfileContent_Nav {...this.props} mobile={false} />
+        </Menu>
+        {/* Create DropDown */}
+        <Menu
+          anchorEl={this.state.anchorCreate}
+          keepMounted
+          open={this.state.isCreateOpen}
+          onClose={() => this.setState({ isCreateOpen: false })}
+          TransitionComponent={Zoom}
+          elevation={0}
+          getContentAnchorEl={null}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          classes={{
+            paper: this.props.classes.createPaper,
+            list: this.props.classes.profilePaperList,
+          }}
+        >
+          <Create_DropDown {...this.props} mobile={false} />
+        </Menu>
+        {/* Notification DropDown */}
+        <Menu
+          anchorEl={this.state.anchorNotification}
+          keepMounted
+          open={this.state.isNotificationsOpen}
+          onClose={() => this.setState({ isNotificationsOpen: false })}
+          TransitionComponent={Zoom}
+          elevation={0}
+          getContentAnchorEl={null}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          classes={{
+            paper: this.props.classes.profilePaper,
+            list: this.props.classes.profilePaperList,
+          }}
+        >
+          <Notification_DropDown {...this.props} />
         </Menu>
       </AppBar>
     );
@@ -344,19 +488,52 @@ class ProfileContent_Nav extends Component {
         {/* Create New Mobile */}
         {/* If mobile true then only show */}
         {this.props.mobile ? (
-          <Link
-            to="/bimarshbhusal"
-            className={
-              this.props.mobile
-                ? "mob_create"
-                : "mob_create desktop_nav_buttons_drop"
-            }
+          <ExpansionPanel
+            classes={{ root: this.props.classes.mob_nav_create_drop }}
           >
-            <Avatar classes={{ root: this.props.classes.icon_ava }}>
-              <AddIcon />
-            </Avatar>
-            <div className="info_nav">Create New Kul</div>
-          </Link>
+            <ExpansionPanelSummary
+              expandIcon={<ExpandMoreIcon style={{ color: "white" }} />}
+            >
+              Create
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails
+              classes={{ root: this.props.classes.mob_expanded_root }}
+            >
+              <Link to="/create-clan" className="mob_create">
+                <Avatar classes={{ root: this.props.classes.icon_ava }}>
+                  <AddIcon />
+                </Avatar>
+                <div className="info_nav">Create Kul</div>
+                <span
+                  style={{ position: "absolute", right: 40, color: "#9f9b9b" }}
+                >
+                  <RightArrowIcon />
+                </span>
+              </Link>
+            </ExpansionPanelDetails>
+            <ExpansionPanelDetails
+              classes={{ root: this.props.classes.mob_expanded_root }}
+            >
+              <Link
+                to="/create-staff-map"
+                className={
+                  this.props.mobile
+                    ? "mob_create"
+                    : "mob_create desktop_nav_buttons_drop"
+                }
+              >
+                <Avatar classes={{ root: this.props.classes.icon_ava }}>
+                  <AddIcon />
+                </Avatar>
+                <div className="info_nav">Create Staff Map</div>
+                <span
+                  style={{ position: "absolute", right: 40, color: "#9f9b9b" }}
+                >
+                  <RightArrowIcon />
+                </span>
+              </Link>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
         ) : (
           ""
         )}
@@ -397,6 +574,45 @@ class ProfileContent_Nav extends Component {
           </Avatar>
           <div className="info_nav">Logout</div>
         </div>
+      </React.Fragment>
+    );
+  }
+}
+//Create DropDown Component
+class Create_DropDown extends Component {
+  render() {
+    return (
+      <React.Fragment>
+        {/*Create clan here */}
+        <Link
+          className="accountSettings desktop_nav_buttons_drop"
+          to="/create-clan"
+        >
+          <Avatar classes={{ root: this.props.classes.icon_ava }}>
+            <AddIcon />
+          </Avatar>
+          <div className="info_nav">Create Clan</div>
+          <RightArrowIcon className="rightIcon" />
+        </Link>
+        {/* Create organization */}
+        <Link className="help desktop_nav_buttons_drop" to="/create-staff-map">
+          <Avatar classes={{ root: this.props.classes.icon_ava }}>
+            <AddIcon />
+          </Avatar>
+          <div className="info_nav">Create Staff Map</div>
+          <RightArrowIcon className="rightIcon" />
+        </Link>
+      </React.Fragment>
+    );
+  }
+}
+// Notification drops down here
+class Notification_DropDown extends Component {
+  render() {
+    return (
+      <React.Fragment>
+        {/* all Notifications here */}
+        Notifcations
       </React.Fragment>
     );
   }

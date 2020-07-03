@@ -1,5 +1,6 @@
 .searchBar {
-  position: relative;
+  right: 10px;
+  position: absolute;
   display: grid;
   align-items: center;
   width: 300px;
@@ -78,6 +79,9 @@
   background: #151515;
   z-index: 6;
 }
+.searchBar input:focus ~ .mobile_notification {
+  z-index: 0;
+}
 .searchBar input::placeholder {
   color: white;
   opacity: 0.5;
@@ -108,6 +112,11 @@
 }
 .desktop_nav_buttons_drop:hover {
   background: #151515ed !important;
+}
+.rightIcon {
+  position: absolute;
+  right: 10px;
+  color: #a8a0a0;
 }
 .mob_profile_name_nav_detail {
   font-size: 0.8em;
@@ -155,6 +164,11 @@
   align-items: center;
   justify-content: flex-end;
   margin-right: 10px;
+}
+.mobile_notification {
+  position: absolute;
+  right: 50px;
+  z-index: 10;
 }
 @media only screen and (max-width: 700px) {
   .desktop_search {
