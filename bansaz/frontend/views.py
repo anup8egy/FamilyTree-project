@@ -64,6 +64,7 @@ class ForgetPasswordVerification(APIView):
             and user.profile.forget_password_token_expiration
             > datetime.now(timezone.utc)
             and "password" in request.data
+            and user.profile.account_activated
         ):
             user.set_password(request.data["password"])
             user.save()

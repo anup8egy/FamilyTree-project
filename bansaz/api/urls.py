@@ -17,5 +17,8 @@ urlpatterns = [
         views.RequestForgetPasswordVerification.as_view(),
         name="request_forget_password_verification",
     ),
+    path(
+        "user-data/dashboard", views.UserDashboardData.as_view(), name="user-dashboard"
+    ),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
