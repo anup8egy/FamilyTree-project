@@ -2,3 +2,7 @@
   font-family: Jost;
   src: url(./Jost-Light.ttf);
 }
+@font-face {
+  font-family: BoldJost;
+  src: url(./Jost-SemiBold.ttf);
+}
