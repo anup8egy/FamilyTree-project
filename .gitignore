@@ -3,3 +3,4 @@ projenv/
 node_modules/
 __pycache__/
 *.py[cod]
+bansaz/api/migrations/__pycache__/

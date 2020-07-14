@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "django.core.mail.backends.console.EmailBackend",
 ]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -145,7 +144,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "yubraj.bhandari.hero@gmail.com"
+EMAIL_HOST_USER = "bansazapp@gmail.com"
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD = "haCKer@me3#4$"
+EMAIL_HOST_PASSWORD = "Password@098"
 EMAIL_PORT = 587
