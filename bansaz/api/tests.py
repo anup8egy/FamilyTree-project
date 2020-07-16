@@ -79,3 +79,6 @@ class AccountsTest(APITestCase):
             json.loads(response.data)["token_code"],
             Profile.objects.get(user=user).activation_token_code,
         )
+
+
+#Made  a minor chnage
