@@ -2,9 +2,8 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework.authtoken.models import Token
 import json
-from .models import Profile
+from api.models import Profile
 
 
 class AccountsTest(APITestCase):
@@ -28,7 +27,7 @@ class AccountsTest(APITestCase):
         """
         data = {
             "first_name": "falano",
-            "last_name": "Ko Xora"
+            "last_name": "Ko Xora",
             "username": "foobar",
             "email": "foobar@example.com",
             "password": "somepassword",

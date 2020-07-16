@@ -54,7 +54,6 @@ class UsernameLogin(APIView):
                 json.dumps({"Error": "Already Authenticated"}),
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        print(request.data)
         if "username" in request.data:
             get_object_or_404(User, username=request.data["username"])
             request.session["username"] = request.data["username"]
