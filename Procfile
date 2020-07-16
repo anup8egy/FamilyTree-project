@@ -1,1 +1,1 @@
-web: gunicorn bansaz.wsgi --log-file -
+web: gunicorn bansaz/bansaz.wsgi --log-file -
