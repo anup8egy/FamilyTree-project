@@ -20,6 +20,8 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from .serializers import UserSerializer
 from django.contrib.auth.models import User
 
@@ -37,9 +39,9 @@ class UserCreate(APIView):
         if serializer.is_valid():
             user = serializer.save()
             if user:
-                token = Token.objects.create(user=user)
+                token = RefreshToken.for_user(user)
                 return Response(
-                    json.dumps({"token": token.key}), status=status.HTTP_201_CREATED
+                    json.dumps({'refresh': str(token), 'token':str(token.access_token)}), status=status.HTTP_201_CREATED
                 )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -95,9 +97,9 @@ class PasswordLogin(APIView):
             return Response(
                 {"error": "Credentials Not Found"}, status=status.HTTP_404_NOT_FOUND
             )
-        token, created = Token.objects.get_or_create(user=user)
+        token = RefreshToken.for_user(user)
 
-        return Response(json.dumps({"token": token.key}), status=status.HTTP_200_OK)
+        return Response(json.dumps({'refresh': str(token), 'token':str(token.access_token)}), status=status.HTTP_200_OK)
 
 
 class RequestEmailVerification(APIView):
@@ -185,16 +187,15 @@ class RequestForgetPasswordVerification(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-# {"token":"58ffd467269200fc56e915f2285c1833a79bc8d4"}
 """ Registration Completed (Oauth and Captcha left )"""
 
 
 class UserDashboardData(APIView):
     permission_classes = [IsAuthenticated]
 
-    @method_decorator(csrf_protect)
+    @method_decorator(csrf_exempt)
     def post(self, request):
         return Response(
-            json.dumps({"User Data Provided": True}), status=status.HTTP_200_OK
+            json.dumps({"User Data Provided": True, "name": request.user.username}), status=status.HTTP_200_OK
         )
 

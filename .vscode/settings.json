@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "projenv\\Scripts\\python.exe",
+    "python.pythonPath": "projenv/bin/python",
     "python.formatting.provider": "black"
 }

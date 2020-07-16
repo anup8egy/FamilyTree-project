@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     "api",
     "frontend",
     "rest_framework",
-    "rest_framework.authtoken",
+    # "rest_framework.authtoken",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -44,7 +44,8 @@ INSTALLED_APPS = [
 ]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
+        # "rest_framework.authentication.TokenAuthentication",
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     # "DEFAULT_RENDERER_CLASSES": [
     #     "rest_framework.renderers.JSONRenderer",
@@ -148,3 +149,13 @@ EMAIL_HOST_USER = "bansazapp@gmail.com"
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = "Password@098"
 EMAIL_PORT = 587
+
+
+
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=100),
+    
+    'AUTH_HEADER_TYPES': ('Bearer','Token'), }
