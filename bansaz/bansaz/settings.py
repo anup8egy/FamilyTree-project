@@ -157,9 +157,11 @@ EMAIL_PORT = 587
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=100),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
     
-    'AUTH_HEADER_TYPES': ('Bearer','Token'), }
+    'AUTH_HEADER_TYPES': ('Bearer','Token'),
+ }
 
 
 # Activate Django-Heroku.

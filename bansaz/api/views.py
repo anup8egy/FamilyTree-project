@@ -20,7 +20,8 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .serializers import UserSerializer
 from django.contrib.auth.models import User
@@ -41,12 +42,20 @@ class UserCreate(APIView):
             if user:
                 token = RefreshToken.for_user(user)
                 return Response(
-                    json.dumps({'refresh': str(token), 'token':str(token.access_token)}), status=status.HTTP_201_CREATED
+                    json.dumps({"token": str(token.access_token)}),
+                    status=status.HTTP_201_CREATED,
+                    headers={
+                        "Set-Cookie": "refresh={};max-age=1296000;httpOnly".format(
+                            str(token)
+                        )
+                    },
                 )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UsernameLogin(APIView):
+    """ Accepts Username or Email And Stores it in Session"""
+
     @method_decorator(csrf_protect)
     def post(self, request, format="json"):
         if request.user.is_authenticated:
@@ -69,6 +78,8 @@ class UsernameLogin(APIView):
 
 
 class PasswordLogin(APIView):
+    """Accepts Password for Username and Returns authentication token """
+
     @method_decorator(csrf_protect)
     def post(self, request, format="json"):
         if request.user.is_authenticated:
@@ -98,7 +109,56 @@ class PasswordLogin(APIView):
             )
         token = RefreshToken.for_user(user)
 
-        return Response(json.dumps({'refresh': str(token), 'token':str(token.access_token)}), status=status.HTTP_200_OK)
+        return Response(
+            json.dumps({"token": str(token.access_token)}),
+            status=status.HTTP_200_OK,
+            headers={
+                "Set-Cookie": "refresh={};max-age=1296000;httpOnly".format(str(token))
+            },
+        )
+
+
+class RefreshAuthToken(APIView):
+    @method_decorator(csrf_protect)
+    def post(self, request):
+        try:
+            refresh_token = request.COOKIES.get("refresh")
+            token = RefreshToken(refresh_token)
+            print("\n\n\nWorking")
+            # expired_auth_header = JWTAuthentication.get_header(request=request)
+            # print("Working")
+            # expired_auth_Token = AccessToken(
+            #     token=JWTAuthentication.get_raw_token(header=expired_auth_header),
+            #     verify=False,
+            # )
+            # print("Working")
+            # if not token["user_id"] == expired_auth_Token["user_id"]:
+            #     return Response(
+            #         json.dumps(
+            #             {
+            #                 "details": "Refresh Token is unavailable/Invalid/Expired or User_id Mismatched"
+            #             }
+            #         ),
+            #         status=status.HTTP_400_BAD_REQUEST,
+            #     )
+
+        except:
+            return Response(
+                json.dumps(
+                    {
+                        "details": "Error Occured. Refresh Token is unavailable/Invalid/Expired"
+                    }
+                ),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            json.dumps({"token": str(token.access_token)}),
+            status=status.HTTP_200_OK,
+            headers={
+                "Set-Cookie": "refresh={};max-age=1296000;httpOnly".format(str(token))
+            },
+        )
 
 
 class RequestEmailVerification(APIView):
@@ -195,6 +255,7 @@ class UserDashboardData(APIView):
     @method_decorator(csrf_exempt)
     def post(self, request):
         return Response(
-            json.dumps({"User Data Provided": True, "name": request.user.username}), status=status.HTTP_200_OK
+            json.dumps({"User Data Provided": True, "name": request.user.username}),
+            status=status.HTTP_200_OK,
         )
 
