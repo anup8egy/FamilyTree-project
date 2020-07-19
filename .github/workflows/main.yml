@@ -13,7 +13,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  Test and Deploy:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -24,6 +24,7 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
+    
     - name: Cache pip
       uses: actions/cache@v2
       with:
@@ -39,4 +40,10 @@ jobs:
     - name: Running Django Tests
       run: |
           python bansaz/manage.py test bansaz/tests/
-
+    
+    # - name: Deploy in Heroku
+    #   uses: akhileshns/heroku-deploy@v3.2.6 # This is the action
+    #   with:
+    #     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+    #     heroku_app_name: "bansazapp" #Must be unique in Heroku
+    #     heroku_email: "bansazapp@gmail.com"
