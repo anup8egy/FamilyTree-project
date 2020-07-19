@@ -124,7 +124,7 @@ class RefreshAuthToken(APIView):
         try:
             refresh_token = request.COOKIES.get("refresh")
             token = RefreshToken(refresh_token)
-            print("\n\n\nWorking")
+            # print("\n\n\nWorking")
             # expired_auth_header = JWTAuthentication.get_header(request=request)
             # print("Working")
             # expired_auth_Token = AccessToken(
