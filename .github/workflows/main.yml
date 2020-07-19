@@ -39,8 +39,7 @@ jobs:
       run: pip install -r requirements.txt
     - name: Running Django Tests
       run: |
-          python bansaz/manage.py test bansaz/tests/
-    
+          python bansaz/manage.py test bansaz/tests/ 
     - name: Deploy in Heroku
       uses: akhileshns/heroku-deploy@v3.2.6 # This is the action
       with:

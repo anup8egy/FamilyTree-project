@@ -252,6 +252,9 @@ class RequestForgetPasswordVerification(APIView):
 class UserDashboardData(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        return Response(json.dumps({"Test": True}))
+
     @method_decorator(csrf_exempt)
     def post(self, request):
         return Response(
