@@ -1,5 +1,11 @@
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
 projenv/
 .vscode/
 node_modules/
 __pycache__/
 *.py[cod]
+bansaz/api/migrations/__pycache__/
