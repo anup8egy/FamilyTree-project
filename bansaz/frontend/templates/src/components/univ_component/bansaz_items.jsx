@@ -9,6 +9,9 @@ import {
   Divider,
   Snackbar,
   IconButton,
+  Dialog,
+  TextField,
+  InputAdornment,
 } from "@material-ui/core";
 import {
   Close as Closeicon,
@@ -293,6 +296,135 @@ class NotificationTab extends Component {
   }
 }
 // Usage :: <NotificationTabBansaz icon=<Something /> message="Notification" close={callback to close the state} open={this.state.open}/>
+
+// user info input div button
+const style_input = () => ({
+  paper: {
+    width: "100%",
+    background: "#0f0f0f",
+    minHeight: "200px",
+    padding: "10px 30px",
+    borderRadius: "10px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+  },
+  root: {
+    "& .MuiFormLabel-root": { color: "#c6c3c3" },
+    "& .MuiInputBase-root": {
+      background: "#151515",
+    },
+    "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
+      border: "0",
+    },
+    "& .MuiFormLabel-root.Mui-focused": {
+      color: "#888282",
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+      border: 0,
+    },
+    "& .MuiInputBase-input": {
+      color: "#c1b9b9",
+    },
+    "& .MuiFormHelperText-root": {
+      color: "#c1b9b9",
+    },
+    "& .MuiFormLabel-root.Mui-error": {
+      color: "#f44336",
+    },
+    "& .MuiFormHelperText-root.Mui-error": {
+      color: "#f44336",
+    },
+  },
+  control_button_submit: {
+    background: "#0c483aed",
+    color: "#a69f9f",
+    "&:hover": {
+      background: "#052d23ed",
+    },
+  },
+  control_button_cancel: {
+    color: "#0c483aed",
+  },
+});
+class InputAppear_Bansaz extends Component {
+  state = {
+    inputText: "",
+  };
+  render() {
+    return (
+      <Dialog
+        onClose={() => this.props.handleClose(false)}
+        open={this.props.open}
+        classes={{ paper: this.props.classes.paper }}
+      >
+        <div className="add_input_field_dialog__comp">{this.props.title}</div>
+        <TextField
+          variant="outlined"
+          label={this.props.subtitle}
+          helperText={this.props.lowLabel}
+          classes={{ root: this.props.classes.root }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                {React.cloneElement(this.props.icon, {
+                  style: { color: "#bfb7b7", fontSize: "1.8rem" },
+                })}
+              </InputAdornment>
+            ),
+          }}
+          error={false}
+          onChange={(e) => this.setState({ inputText: e.target.value })}
+          onKeyUp={(e) => {
+            e.keyCode === 13 ? this.props.onSubmit(this.state.inputText) : null;
+          }}
+        />
+        <div className="control_input_add_input_field_dialog__comp">
+          <Button
+            classes={{ root: this.props.classes.control_button_cancel }}
+            disableRipple
+            onClick={() => this.props.handleClose(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            classes={{ root: this.props.classes.control_button_submit }}
+            disableRipple
+            onClick={() => this.props.onSubmit(this.state.inputText)}
+          >
+            Submit
+          </Button>
+        </div>
+      </Dialog>
+    );
+  }
+}
+// // USage::<InputAppear title="Something" subtitle="On label" lowLabel="More Info Below Box" icon={<IconOnInputBox />} onSubmit={this.handler} open={true}/>
+// this.handler should accept a value that is input value of text box . It is excuted when user submits
+// ***
+
+// Letter Button
+const style_letter_button = () => ({
+  root: {
+    color: "#76cccc",
+    textTransform: "none",
+  },
+});
+class ButtonLetter_Bansaz extends Component {
+  render() {
+    return (
+      <Button
+        onClick={this.props.clickHandler}
+        disableRipple
+        classes={{ root: this.props.classes.root }}
+      >
+        {this.props.icon}
+        {this.props.content}
+      </Button>
+    );
+  }
+}
+// usage:: <ButtonLetter content={`Add a new `} icon={<AddIcon /> clickHandler={this.handleAddAbout}/>
 const ButtonBansaz = withStyles(styles_button_bansaz)(Button_Bansaz_Black);
 const ToolTipBansaz = withStyles(style_tooltip_bansaz)(ToolTip_Bansaz);
 const SideWiseBansaz = withStyles(style_sidewise_bansaz)(
@@ -300,11 +432,14 @@ const SideWiseBansaz = withStyles(style_sidewise_bansaz)(
 );
 const DownWiseBansaz = withStyles(style_downWiseTab)(DownWiseTab);
 const NotificationTabBansaz = withStyles(style_noti_tab)(NotificationTab);
-NotificationTab;
+const InputAppear = withStyles(style_input)(InputAppear_Bansaz);
+const ButtonLetter = withStyles(style_letter_button)(ButtonLetter_Bansaz);
 export {
   ButtonBansaz,
   ToolTipBansaz,
   SideWiseBansaz,
   DownWiseBansaz,
   NotificationTabBansaz,
+  InputAppear,
+  ButtonLetter,
 };

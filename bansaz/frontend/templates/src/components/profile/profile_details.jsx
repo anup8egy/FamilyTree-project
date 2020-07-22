@@ -4,6 +4,8 @@ import {
   ToolTipBansaz,
   SideWiseBansaz,
   DownWiseBansaz,
+  InputAppear,
+  ButtonLetter,
 } from "../univ_component/bansaz_items";
 import {
   Person as PersonIcon,
@@ -13,7 +15,11 @@ import {
   School as EducationIcon,
   ImportContacts as ContactIcon,
   Grain as FamilyIcon,
-  Flag,
+  Work as WorkIcon,
+  LocationCity as LocationIcon,
+  Room as PlaceIcon,
+  Group as RelationshipIcon,
+  Add as AddIcon,
 } from "@material-ui/icons";
 class Profile_Details extends Component {
   constructor() {
@@ -91,6 +97,19 @@ class Profile_Details extends Component {
 }
 // About Components
 class AboutDefault extends Component {
+  state = {
+    isOrganizationAddOpened: true,
+  };
+  handleAddAbout = () => {
+    this.setState({ isOrganizationAddOpened: true });
+  };
+  handleCloseAboutAdd = (value) => {
+    this.setState({ isOrganizationAddOpened: value });
+  };
+  // When Input of About Page is Submitted
+  handleSubmitOfAbout = (passed_input_value) => {
+    console.log(passed_input_value);
+  };
   render() {
     return (
       <>
@@ -99,14 +118,41 @@ class AboutDefault extends Component {
           ? this.props.content.as_Admin.map((data, index) => {
               return (
                 <div key={index} className="user_about_items__">
-                  {/* IF not set already */}
+                  {/* IF data available already */}
+                  {data.icon}
+                  {data.available ? (
+                    <>{data.value}</>
+                  ) : (
+                    <ButtonLetter
+                      content={`Add a new ${data.content}`}
+                      icon={<AddIcon />}
+                      clickHandler={this.handleAddAbout}
+                    />
+                  )}
+                </div>
+              );
+            })
+          : // If opened by Normal Out User
+            this.props.content.as_Admin.map((data, index) => {
+              return (
+                <div key={index} className="user_about_items__">
+                  {/* IF data available already */}
+                  {data.icon}
                   {data.available
                     ? data.value
                     : `${data.content} not available`}
                 </div>
               );
-            })
-          : ""}
+            })}
+        <InputAppear
+          open={this.state.isOrganizationAddOpened}
+          handleClose={this.handleCloseAboutAdd}
+          icon={<EducationIcon />}
+          title="Something"
+          subtitle="On label"
+          lowLabel="More Info Below Box"
+          onSubmit={this.handleSubmitOfAbout}
+        />
       </>
     );
   }
@@ -119,39 +165,37 @@ function OverView() {
           {
             content: "Workplace",
             available: true,
-            icon: "someth",
+            icon: <WorkIcon />,
             value: "Kathmandu Was Poplar",
           },
           {
             content: "School",
-            available: true,
+            available: false,
+            icon: <EducationIcon />,
             value: "Shree Shanti Namuna S.S",
           },
           {
             content: "College",
             available: true,
+            icon: <EducationIcon />,
             value: "Shree Shanti Namuna S.S",
           },
           {
             content: "City",
             available: true,
+            icon: <PlaceIcon />,
             value: "Butwal",
           },
           {
             content: "Relationship Status",
             available: true,
+            icon: <RelationshipIcon />,
             value: "Single",
-          },
-        ],
-        as_user: [
-          {
-            content: "Workplace",
-            available: true,
-            value: "Kathmadnu was Poplar",
           },
         ],
       }}
       admin={true}
+      // admin set to true then displayed as Admin else as Viewer
     />
   );
 }
