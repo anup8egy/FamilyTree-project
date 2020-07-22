@@ -27,6 +27,7 @@ class AccountsTest(APITestCase):
         self.login_password_url = reverse("password_login")
         self.request_email_verification_url = reverse("request_email_verification")
         self.token_refresh_url = reverse("token_refresh")
+        self.user_dashboard_url = reverse("user_dashboard")
 
     def check_tokens(self, response):
         """ Ensure Tokens are Well Set """
@@ -130,3 +131,55 @@ class AccountsTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue("token" in json.loads(response.data))
+
+    def test_logout_everywhere(self):
+        """Ensure Once token_secret is changed user can login only with new token """
+        data_username = {"username": "testuser"}
+        data_password = {"password": "testpassword"}
+        # Send data for login and obtain access token
+        response = self.client.post(self.login_email_url, data_username, format="json")
+        response = self.client.post(
+            self.login_password_url, data_password, format="json"
+        )
+        # Check everything went well. aka 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue("token" in json.loads(response.data))
+
+        # Try sending with authorization header
+        response1 = self.client.post(
+            self.user_dashboard_url,
+            data=None,
+            HTTP_AUTHORIZATION="Token " + json.loads(response.data)["token"],
+        )
+        self.assertEqual(response1.status_code, status.HTTP_200_OK)
+
+        # Logout everywhere : change the User.profile.token_secret
+        self.test_profile.logout_everywhere()
+
+        # Check after changing token_secret same last token doesnot works
+        response = self.client.post(
+            self.user_dashboard_url,
+            data=None,
+            headers={"Authorization": "Token " + json.loads(response.data)["token"]},
+        )
+        # Didnot went Ok
+        self.assertNotEqual(response.status_code, status.HTTP_200_OK)
+
+        # Login again and recieve new access token with chnaged token_secret
+        new_response = self.client.post(
+            self.login_email_url, data_username, format="json"
+        )
+        new_response = self.client.post(
+            self.login_password_url, data_password, format="json"
+        )
+
+        self.assertEqual(new_response.status_code, status.HTTP_200_OK)
+
+        # Send new access token as authorization where everything goes well aka 200 OK
+        new_response = self.client.post(
+            self.user_dashboard_url,
+            data=None,
+            HTTP_AUTHORIZATION="Token " + json.loads(new_response.data)["token"],
+        )
+        self.assertEqual(new_response.status_code, status.HTTP_200_OK)
+
