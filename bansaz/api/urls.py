@@ -1,6 +1,7 @@
 from django.urls import path, include, re_path
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
+from frontend.views import FrontEndView
 from . import views
 
 urlpatterns = [
@@ -25,5 +26,8 @@ urlpatterns = [
     path(
         "user-data/profile", views.UserProfileData.as_view(), name="user_profile_view"
     ),
+]
+urlpatterns += [
+    re_path(r"(?P<path>.*)", FrontEndView.as_view()),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

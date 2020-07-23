@@ -55,6 +55,7 @@ class ProfileDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
+            "picture",
             "workplace",
             "schools",
             "colleges",
