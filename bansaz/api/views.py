@@ -23,7 +23,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ProfileDataSerializer
 from django.contrib.auth.models import User
 
 
@@ -270,5 +270,17 @@ class UserDashboardData(APIView):
         return Response(
             json.dumps({"User Data Provided": True, "name": request.user.username}),
             status=status.HTTP_200_OK,
+        )
+
+
+class UserProfileData(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if request.user:
+            data = ProfileDataSerializer(request.user.profile).data
+            return Response(json.dumps(data))
+        return Response(
+            json.dumps({"deatil": "Error Occured"}), status=status.HTTP_400_BAD_REQUEST
         )
 

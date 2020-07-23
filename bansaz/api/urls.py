@@ -18,9 +18,12 @@ urlpatterns = [
         views.RequestForgetPasswordVerification.as_view(),
         name="request_forget_password_verification",
     ),
+    path("auth/logout", views.LogoutUser.as_view(), name="logout_user"),
     path(
         "user-data/dashboard", views.UserDashboardData.as_view(), name="user_dashboard"
     ),
-    path("auth/logout", views.LogoutUser.as_view(), name="logout_user"),
+    path(
+        "user-data/profile", views.UserProfileData.as_view(), name="user_profile_view"
+    ),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

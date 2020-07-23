@@ -4,6 +4,22 @@ from django.core.validators import RegexValidator
 from django.utils.crypto import get_random_string
 
 # Create your models here.
+class MyArrayField(models.CharField):
+    def from_db_value(self, value, expression, connection):
+        if value is None:
+            return value
+        if isinstance(value, str):
+            return value.strip("[]").replace('"', "").replace("'", "").split(",")
+        return None
+
+    def to_python(self, value):
+        if isinstance(value, str):
+            return value
+
+        if value is None:
+            return value
+
+        return str(value)
 
 
 # def get_country_tuple():
@@ -292,6 +308,18 @@ class Profile(models.Model):
     forget_password_token_code = models.CharField(max_length=80, null=True, blank=True)
     forget_password_token_expiration = models.DateTimeField(null=True, blank=True)
 
+    picture = models.ImageField(upload_to="images/", blank=True, null=True)
+    workplace = models.CharField(max_length=70, blank=True, null=True)
+    schools = MyArrayField(max_length=300, blank=True, null=True)
+    colleges = MyArrayField(max_length=300, blank=True, null=True)
+    city = models.CharField(max_length=20, blank=True, null=True)
+    relationship_status = models.CharField(max_length=20, blank=True, null=True)
+    degrees = MyArrayField(max_length=100, blank=True, null=True)
+    education_status = models.CharField(max_length=30, blank=True, null=True)
+    phone_numbers = MyArrayField(max_length=50, blank=True, null=True)
+    emails = MyArrayField(max_length=50, blank=True, null=True)
+    gender = models.CharField(max_length=8, blank=True, null=True)
+
     def __str__(self):
         return "{}, activated:{} ".format(self.user, self.account_activated)
 
@@ -306,5 +334,4 @@ class Profile(models.Model):
 
 class Person(models.Model):
     name = models.CharField(max_length=30)
-    picture = models.ImageField(upload_to="images/")
 

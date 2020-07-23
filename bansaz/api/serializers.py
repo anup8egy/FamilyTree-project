@@ -50,3 +50,21 @@ class UserSerializer(serializers.ModelSerializer):
         Profile.objects.create(user=user, **profile_data)
         return user
 
+
+class ProfileDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = [
+            "workplace",
+            "schools",
+            "colleges",
+            "city",
+            "relationship_status",
+            "degrees",
+            "education_status",
+            "phone_numbers",
+            "emails",
+            "gender",
+        ]
+        # read_only_fields = "__all__"
+
