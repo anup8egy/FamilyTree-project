@@ -44,8 +44,8 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         # "rest_framework.authentication.TokenAuthentication",
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-        # "api.authentication.APIAuthentication"
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "api.authentication.APIAuthentication",
     ),
     # "DEFAULT_RENDERER_CLASSES": [
     #     "rest_framework.renderers.JSONRenderer",
@@ -142,6 +142,8 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, "static")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/templates/dist/static"),
 ]
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

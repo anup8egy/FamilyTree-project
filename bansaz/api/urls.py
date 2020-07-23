@@ -21,5 +21,6 @@ urlpatterns = [
     path(
         "user-data/dashboard", views.UserDashboardData.as_view(), name="user_dashboard"
     ),
+    path("auth/logout", views.LogoutUser.as_view(), name="logout_user"),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -28,6 +28,7 @@ class AccountsTest(APITestCase):
         self.request_email_verification_url = reverse("request_email_verification")
         self.token_refresh_url = reverse("token_refresh")
         self.user_dashboard_url = reverse("user_dashboard")
+        self.logout_user_url = reverse("logout_user")
 
     def check_tokens(self, response):
         """ Ensure Tokens are Well Set """
@@ -116,6 +117,7 @@ class AccountsTest(APITestCase):
             self.login_password_url, data_password, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_tokens(response)
 
         obtained_access_token = json.loads(response.data)["token"]
 
@@ -123,16 +125,18 @@ class AccountsTest(APITestCase):
             self.token_refresh_url,
             data={},
             format="json",
-            headers={
-                "Authorization": "Token " + obtained_access_token,
-                # "Set-Cookie": "refresh={};max-age=1296000;httpOnly".format(str(token)),
-            },
+            HTTP_AUTHORIZATION="Token " + obtained_access_token,
+            HTTP_COOKIE="refresh={}".format(
+                response.__getitem__("set-cookie").split(";")[0].split("=")[1]
+            ),
         )
+        # print(response.__getitem__("set-cookie").split(";")[0].split("=")[1])
+        # print(response.data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue("token" in json.loads(response.data))
 
-    def test_logout_everywhere(self):
+    def test_logout_user(self):
         """Ensure Once token_secret is changed user can login only with new token """
         data_username = {"username": "testuser"}
         data_password = {"password": "testpassword"}
@@ -153,14 +157,14 @@ class AccountsTest(APITestCase):
         )
         self.assertEqual(response1.status_code, status.HTTP_200_OK)
 
-        # Logout everywhere : change the User.profile.token_secret
-        self.test_profile.logout_everywhere()
+        # Logout User : change the User.profile.access_token_secret
+        self.test_profile.logout_user()
 
         # Check after changing token_secret same last token doesnot works
         response = self.client.post(
             self.user_dashboard_url,
             data=None,
-            headers={"Authorization": "Token " + json.loads(response.data)["token"]},
+            HTTP_AUTHORIZATION="Token " + json.loads(response.data)["token"],
         )
         # Didnot went Ok
         self.assertNotEqual(response.status_code, status.HTTP_200_OK)
@@ -176,10 +180,27 @@ class AccountsTest(APITestCase):
         self.assertEqual(new_response.status_code, status.HTTP_200_OK)
 
         # Send new access token as authorization where everything goes well aka 200 OK
-        new_response = self.client.post(
+        response = self.client.post(
             self.user_dashboard_url,
             data=None,
             HTTP_AUTHORIZATION="Token " + json.loads(new_response.data)["token"],
         )
-        self.assertEqual(new_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # # Again Use the LOgOut link to logout
+        # print(self.test_profile.access_token_secret)
+        # response = self.client.post(
+        #     self.logout_user_url,
+        #     data=None,
+        #     HTTP_AUTHORIZATION="Token " + json.loads(new_response.data)["token"],
+        # )
+        # print(self.test_profile.access_token_secret)
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # response = self.client.post(
+        #     self.user_dashboard_url,
+        #     data=None,
+        #     HTTP_AUTHORIZATION="Token " + json.loads(new_response.data)["token"],
+        # )
+        # self.assertEqual(new_response.status_code, status.HTTP_401_UNAUTHORIZED)
 

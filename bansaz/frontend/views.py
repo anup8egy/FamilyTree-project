@@ -71,7 +71,7 @@ class ForgetPasswordVerification(APIView):
             user.profile.forget_password_token_code = ""
             user.profile.forget_password_token_expiration = datetime.now(timezone.utc)
             user.profile.save()
-            user.profile.logout_everywhere()
+            user.profile.invalidate_refresh()
             user.profile.save()
             return redirect("/login")
         return Response("Error.", status=status.HTTP_400_BAD_REQUEST)

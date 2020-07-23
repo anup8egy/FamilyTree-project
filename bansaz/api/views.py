@@ -41,7 +41,8 @@ class UserCreate(APIView):
             user = serializer.save()
             if user:
                 token = RefreshToken.for_user(user)
-                token["token_secret"] = user.profile.token_secret
+                token["refresh_token_secret"] = user.profile.refresh_token_secret
+                token["access_token_secret"] = user.profile.access_token_secret
                 return Response(
                     json.dumps({"token": str(token.access_token)}),
                     status=status.HTTP_201_CREATED,
@@ -109,7 +110,9 @@ class PasswordLogin(APIView):
                 {"error": "Credentials Not Found"}, status=status.HTTP_404_NOT_FOUND
             )
         token = RefreshToken.for_user(user)
-        token["token_secret"] = user.profile.token_secret
+
+        token["refresh_token_secret"] = user.profile.refresh_token_secret
+        token["access_token_secret"] = user.profile.access_token_secret
         return Response(
             json.dumps({"token": str(token.access_token)}),
             status=status.HTTP_200_OK,
@@ -125,23 +128,10 @@ class RefreshAuthToken(APIView):
         try:
             refresh_token = request.COOKIES.get("refresh")
             token = RefreshToken(refresh_token)
-            # print("\n\n\nWorking")
-            # expired_auth_header = JWTAuthentication.get_header(request=request)
-            # print("Working")
-            # expired_auth_Token = AccessToken(
-            #     token=JWTAuthentication.get_raw_token(header=expired_auth_header),
-            #     verify=False,
-            # )
-            # print("Working")
-            # if not token["user_id"] == expired_auth_Token["user_id"]:
-            #     return Response(
-            #         json.dumps(
-            #             {
-            #                 "details": "Refresh Token is unavailable/Invalid/Expired or User_id Mismatched"
-            #             }
-            #         ),
-            #         status=status.HTTP_400_BAD_REQUEST,
-            #     )
+            user = User.objects.get(id=token["user_id"])
+
+            token["refresh_token_secret"] = user.profile.refresh_token_secret
+            token["access_token_secret"] = user.profile.access_token_secret
 
         except:
             return Response(
@@ -247,6 +237,23 @@ class RequestForgetPasswordVerification(APIView):
                 status=status.HTTP_200_OK,
             )
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @method_decorator(csrf_exempt)
+    def post(self, request):
+        if not request.user:
+            return Response(
+                json.dumps(
+                    {"details": "Send JWT Token as Authentication: Token <JWT_TOKEN>"}
+                ),
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        request.user.profile.logout_user()
+
+        return Response(json.dumps({"Info": "User Logged Out"}))
 
 
 """ Registration Completed (Oauth and Captcha left )"""

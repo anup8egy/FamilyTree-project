@@ -273,7 +273,10 @@ class Profile(models.Model):
     ]
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     country = models.CharField(max_length=100, choices=COUNTRY_CHOICES, default="NP")
-    token_secret = models.CharField(max_length=50, default=get_random_string(40))
+    access_token_secret = models.CharField(max_length=50, default=get_random_string(40))
+    refresh_token_secret = models.CharField(
+        max_length=50, default=get_random_string(40)
+    )
 
     phone_regex = RegexValidator(
         regex=r"^\+?1?\d{9,15}$",
@@ -292,7 +295,16 @@ class Profile(models.Model):
     def __str__(self):
         return "{}, activated:{} ".format(self.user, self.account_activated)
 
-    def logout_everywhere(self):
-        self.token_secret = get_random_string(40)
-        return self.save()
+    def logout_user(self):
+        self.access_token_secret = get_random_string(40)
+        self.save()
+
+    def invalidate_refresh(self):
+        self.refresh_token_secret = get_random_string(40)
+        self.save()
+
+
+class Person(models.Model):
+    name = models.CharField(max_length=30)
+    picture = models.ImageField(upload_to="images/")
 
