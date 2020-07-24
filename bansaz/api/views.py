@@ -19,6 +19,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import JSONParser, MultiPartParser
 
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -282,5 +283,26 @@ class UserProfileData(APIView):
             return Response(json.dumps(data))
         return Response(
             json.dumps({"deatil": "Error Occured"}), status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+class UserProfileDataChange(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser, MultiPartParser]
+
+    def post(self, request):
+        if request.user:
+            serializer = ProfileDataSerializer(request.user.profile, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(json.dumps({"Info": "User profile data updated"}))
+
+            return Response(
+                json.dumps(serializer.errors), status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            json.dumps({"details": "Error Occurred"}),
+            status=status.HTTP_400_BAD_REQUEST,
         )
 

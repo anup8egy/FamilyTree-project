@@ -27,6 +27,11 @@ class APIAuthentication(JWTAuthentication):
         if not user.is_active:
             raise AuthenticationFailed(_("User is inactive"), code="user_inactive")
 
+        if not "access_token_secret" in validated_token:
+            raise AuthenticationFailed(
+                _("Bad Token used. Get new access Token"), code="get_new_access_token"
+            )
+
         if (
             not user.profile.access_token_secret
             == validated_token["access_token_secret"]

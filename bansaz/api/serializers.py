@@ -69,3 +69,25 @@ class ProfileDataSerializer(serializers.ModelSerializer):
         ]
         # read_only_fields = "__all__"
 
+    def update(self, instance, validated_data):
+        instance.picture = validated_data.get("picture", instance.picture)
+        instance.workplace = validated_data.get("workplace", instance.workplace)
+        instance.schools = validated_data.get("schools", instance.schools)
+        instance.colleges = validated_data.get("colleges", instance.colleges)
+        instance.city = validated_data.get("city", instance.city)
+        instance.relationship_status = validated_data.get(
+            "relationship_status", instance.relationship_status
+        )
+        instance.degrees = validated_data.get("degrees", instance.degrees)
+        instance.education_status = validated_data.get(
+            "education_status", instance.education_status
+        )
+        instance.phone_numbers = validated_data.get(
+            "phone_numbers", instance.phone_numbers
+        )
+        instance.emails = validated_data.get("emails", instance.emails)
+        instance.gender = validated_data.get("gender", instance.gender)
+
+        instance.save()
+        return instance
+

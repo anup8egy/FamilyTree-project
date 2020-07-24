@@ -26,6 +26,11 @@ urlpatterns = [
     path(
         "user-data/profile", views.UserProfileData.as_view(), name="user_profile_view"
     ),
+    path(
+        "user-data/profile/edit",
+        views.UserProfileDataChange.as_view(),
+        name="user_profile_edit",
+    ),
 ]
 urlpatterns += [
     re_path(r"(?P<path>.*)", FrontEndView.as_view()),
