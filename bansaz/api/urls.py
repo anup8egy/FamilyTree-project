@@ -1,6 +1,7 @@
 from django.urls import path, include, re_path
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
+from frontend.views import FrontEndView
 from . import views
 
 urlpatterns = [
@@ -18,8 +19,20 @@ urlpatterns = [
         views.RequestForgetPasswordVerification.as_view(),
         name="request_forget_password_verification",
     ),
+    path("auth/logout", views.LogoutUser.as_view(), name="logout_user"),
     path(
-        "user-data/dashboard", views.UserDashboardData.as_view(), name="user-dashboard"
+        "user-data/dashboard", views.UserDashboardData.as_view(), name="user_dashboard"
     ),
+    path(
+        "user-data/profile", views.UserProfileData.as_view(), name="user_profile_view"
+    ),
+    path(
+        "user-data/profile/edit",
+        views.UserProfileDataChange.as_view(),
+        name="user_profile_edit",
+    ),
+]
+urlpatterns += [
+    re_path(r"(?P<path>.*)", FrontEndView.as_view()),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

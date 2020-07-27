@@ -50,3 +50,44 @@ class UserSerializer(serializers.ModelSerializer):
         Profile.objects.create(user=user, **profile_data)
         return user
 
+
+class ProfileDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = [
+            "picture",
+            "workplace",
+            "schools",
+            "colleges",
+            "city",
+            "relationship_status",
+            "degrees",
+            "education_status",
+            "phone_numbers",
+            "emails",
+            "gender",
+        ]
+        # read_only_fields = "__all__"
+
+    def update(self, instance, validated_data):
+        instance.picture = validated_data.get("picture", instance.picture)
+        instance.workplace = validated_data.get("workplace", instance.workplace)
+        instance.schools = validated_data.get("schools", instance.schools)
+        instance.colleges = validated_data.get("colleges", instance.colleges)
+        instance.city = validated_data.get("city", instance.city)
+        instance.relationship_status = validated_data.get(
+            "relationship_status", instance.relationship_status
+        )
+        instance.degrees = validated_data.get("degrees", instance.degrees)
+        instance.education_status = validated_data.get(
+            "education_status", instance.education_status
+        )
+        instance.phone_numbers = validated_data.get(
+            "phone_numbers", instance.phone_numbers
+        )
+        instance.emails = validated_data.get("emails", instance.emails)
+        instance.gender = validated_data.get("gender", instance.gender)
+
+        instance.save()
+        return instance
+

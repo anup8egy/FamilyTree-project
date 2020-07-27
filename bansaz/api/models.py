@@ -1,8 +1,38 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
+from django.utils.crypto import get_random_string
+from django.core.exceptions import ValidationError
 
 # Create your models here.
+class MyArrayField(models.CharField):
+    def from_db_value(self, value, expression, connection):
+        if value is None:
+            return value
+        if isinstance(value, str):
+            return value.strip("[]").replace('"', "").replace("'", "").split(",")
+        return None
+
+    def to_python(self, value):
+        if isinstance(value, str):
+            return value
+
+        if value is None:
+            return value
+
+        return str(value)
+
+
+def validate_image(image):
+    # print("\n\n\n", dir(image), "\n\n\n")
+    file_size = image.size
+    # limit_kb = 150
+    # if file_size > limit_kb * 1024:
+    # raise ValidationError("Max size of file is %s KB" % limit)
+
+    limit_mb = 5
+    if file_size > limit_mb * 1024 * 1024:
+        raise ValidationError("Max size of file is %s MB" % limit_mb)
 
 
 # def get_country_tuple():
@@ -272,6 +302,10 @@ class Profile(models.Model):
     ]
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     country = models.CharField(max_length=100, choices=COUNTRY_CHOICES, default="NP")
+    access_token_secret = models.CharField(max_length=50, default=get_random_string(40))
+    refresh_token_secret = models.CharField(
+        max_length=50, default=get_random_string(40)
+    )
 
     phone_regex = RegexValidator(
         regex=r"^\+?1?\d{9,15}$",
@@ -287,6 +321,32 @@ class Profile(models.Model):
     forget_password_token_code = models.CharField(max_length=80, null=True, blank=True)
     forget_password_token_expiration = models.DateTimeField(null=True, blank=True)
 
+    picture = models.ImageField(
+        "Image", upload_to="images/", blank=True, null=True, validators=[validate_image]
+    )
+    workplace = models.CharField(max_length=70, blank=True, null=True)
+    schools = MyArrayField(max_length=300, blank=True, null=True)
+    colleges = MyArrayField(max_length=300, blank=True, null=True)
+    city = models.CharField(max_length=20, blank=True, null=True)
+    relationship_status = models.CharField(max_length=20, blank=True, null=True)
+    degrees = MyArrayField(max_length=100, blank=True, null=True)
+    education_status = models.CharField(max_length=30, blank=True, null=True)
+    phone_numbers = MyArrayField(max_length=50, blank=True, null=True)
+    emails = MyArrayField(max_length=50, blank=True, null=True)
+    gender = models.CharField(max_length=8, blank=True, null=True)
+
     def __str__(self):
         return "{}, activated:{} ".format(self.user, self.account_activated)
+
+    def logout_user(self):
+        self.access_token_secret = get_random_string(40)
+        self.save()
+
+    def invalidate_refresh(self):
+        self.refresh_token_secret = get_random_string(40)
+        self.save()
+
+
+class Person(models.Model):
+    name = models.CharField(max_length=30)
 

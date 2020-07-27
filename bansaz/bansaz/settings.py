@@ -44,7 +44,8 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         # "rest_framework.authentication.TokenAuthentication",
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "api.authentication.APIAuthentication",
     ),
     # "DEFAULT_RENDERER_CLASSES": [
     #     "rest_framework.renderers.JSONRenderer",
@@ -135,12 +136,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(PROJECT_ROOT, "static")
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/templates/dist/static"),
 ]
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -152,19 +155,17 @@ EMAIL_HOST_PASSWORD = "Password@098"
 EMAIL_PORT = 587
 
 
-
-
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
-    
-    'AUTH_HEADER_TYPES': ('Bearer','Token'),
- }
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=15),
+    "AUTH_HEADER_TYPES": ("Bearer", "Token"),
+}
 
 
 # Activate Django-Heroku.
-if '/app' in os.environ['HOME']:
+if "/app" in os.environ["HOME"]:
     import django_heroku
+
     django_heroku.settings(locals())

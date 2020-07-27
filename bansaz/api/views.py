@@ -19,11 +19,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import JSONParser, MultiPartParser
 
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ProfileDataSerializer
 from django.contrib.auth.models import User
 
 
@@ -41,6 +42,8 @@ class UserCreate(APIView):
             user = serializer.save()
             if user:
                 token = RefreshToken.for_user(user)
+                token["refresh_token_secret"] = user.profile.refresh_token_secret
+                token["access_token_secret"] = user.profile.access_token_secret
                 return Response(
                     json.dumps({"token": str(token.access_token)}),
                     status=status.HTTP_201_CREATED,
@@ -109,6 +112,8 @@ class PasswordLogin(APIView):
             )
         token = RefreshToken.for_user(user)
 
+        token["refresh_token_secret"] = user.profile.refresh_token_secret
+        token["access_token_secret"] = user.profile.access_token_secret
         return Response(
             json.dumps({"token": str(token.access_token)}),
             status=status.HTTP_200_OK,
@@ -124,23 +129,10 @@ class RefreshAuthToken(APIView):
         try:
             refresh_token = request.COOKIES.get("refresh")
             token = RefreshToken(refresh_token)
-            # print("\n\n\nWorking")
-            # expired_auth_header = JWTAuthentication.get_header(request=request)
-            # print("Working")
-            # expired_auth_Token = AccessToken(
-            #     token=JWTAuthentication.get_raw_token(header=expired_auth_header),
-            #     verify=False,
-            # )
-            # print("Working")
-            # if not token["user_id"] == expired_auth_Token["user_id"]:
-            #     return Response(
-            #         json.dumps(
-            #             {
-            #                 "details": "Refresh Token is unavailable/Invalid/Expired or User_id Mismatched"
-            #             }
-            #         ),
-            #         status=status.HTTP_400_BAD_REQUEST,
-            #     )
+            user = User.objects.get(id=token["user_id"])
+
+            token["refresh_token_secret"] = user.profile.refresh_token_secret
+            token["access_token_secret"] = user.profile.access_token_secret
 
         except:
             return Response(
@@ -163,29 +155,31 @@ class RefreshAuthToken(APIView):
 
 class RequestEmailVerification(APIView):
     throttle_scope = "forget_password"
+    permission_classes = [IsAuthenticated]
 
     @method_decorator(csrf_protect)
     def post(self, request):
-        if "token" in request.data:
-            token = get_object_or_404(Token, key=request.data["token"])
-            if token.user.profile.account_activated:
+        if request.user:
+            user = request.user
+            # token = get_object_or_404(Token, key=request.data["token"])
+            if user.profile.account_activated:
                 return Response(
                     json.dumps({"error": "Already verified"}),
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            token.user.profile.activation_token_code = get_random_string(length=80)
-            token.user.profile.activation_token_expiration = datetime.now(
+            user.profile.activation_token_code = get_random_string(length=80)
+            user.profile.activation_token_expiration = datetime.now(
                 timezone.utc
             ) + timedelta(days=1)
-            token.user.profile.save()
+            user.profile.save()
             html_message = render_to_string(
                 "email.html",
                 {
-                    "user": token.user,
+                    "user": user,
                     "domain": "localhost:8000",
-                    "uid": urlsafe_base64_encode(force_bytes(token.user.pk)),
-                    "token": token.user.profile.activation_token_code,
-                    "information": "Please,confirm your email address to get started ",
+                    "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                    "token": user.profile.activation_token_code,
+                    "information": "Please,confirm your email0000000 address to get started ",
                     "reason": "This is necessary in order to reset your password in case you forget it.",
                     "button": "Verify Now",
                     "link": "verify_email",
@@ -196,7 +190,7 @@ class RequestEmailVerification(APIView):
                 html_message=html_message,
                 from_email="The kul app",
                 message=strip_tags(html_message),
-                recipient_list=[token.user.email,],
+                recipient_list=[user.email,],
                 fail_silently=False,
             )
             return Response(
@@ -246,6 +240,23 @@ class RequestForgetPasswordVerification(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+class LogoutUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @method_decorator(csrf_exempt)
+    def post(self, request):
+        if not request.user:
+            return Response(
+                json.dumps(
+                    {"details": "Send JWT Token as Authentication: Token <JWT_TOKEN>"}
+                ),
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        request.user.profile.logout_user()
+
+        return Response(json.dumps({"Info": "User Logged Out"}))
+
+
 """ Registration Completed (Oauth and Captcha left )"""
 
 
@@ -260,5 +271,38 @@ class UserDashboardData(APIView):
         return Response(
             json.dumps({"User Data Provided": True, "name": request.user.username}),
             status=status.HTTP_200_OK,
+        )
+
+
+class UserProfileData(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if request.user:
+            data = ProfileDataSerializer(request.user.profile).data
+            return Response(json.dumps(data))
+        return Response(
+            json.dumps({"deatil": "Error Occured"}), status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+class UserProfileDataChange(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser, MultiPartParser]
+
+    def post(self, request):
+        if request.user:
+            serializer = ProfileDataSerializer(request.user.profile, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(json.dumps({"Info": "User profile data updated"}))
+
+            return Response(
+                json.dumps(serializer.errors), status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            json.dumps({"details": "Error Occurred"}),
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
