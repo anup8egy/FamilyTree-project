@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import LoadProgress from "react-topbar-progress-indicator";
+
 LoadProgress.config({
   barColors: {
     "0": "#ffffff",
@@ -10,11 +11,13 @@ LoadProgress.config({
   shadowBlur: 0,
   barThickness: 1,
 });
+
 class RouteChange extends Component {
   constructor(props) {
     super(props);
     this.state = { loading: false };
   }
+
   componentDidMount() {
     this.setState({ loading: false });
     this.unlisten = this.props.history.listen((location, action) => {
@@ -26,6 +29,7 @@ class RouteChange extends Component {
   componentWillUnmount() {
     this.unlisten();
   }
+
   render() {
     return (
       <React.Fragment>{this.state.loading && <LoadProgress />}</React.Fragment>

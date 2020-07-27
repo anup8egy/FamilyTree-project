@@ -1,89 +1,29 @@
 import React, { Component } from "react";
-import {
-  Avatar,
-  Button,
-  TextField,
-  InputAdornment,
-  Radio,
-  LinearProgress,
-} from "@material-ui/core";
+import { Avatar, Button, TextField, InputAdornment } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import AnimatedBackground from "../animatedBackground";
 import Swipe from "react-swipeable-views";
 import { Helmet } from "react-helmet";
-import "../../style/login.css";
+
+import AnimatedBackground from "./../AnimateBackground/index";
+import LinearProgBar from "./LinearProgress";
+
+import ForgotStyles from "./styles";
+
 // pics
 import ForgotIcon from "../../pics/risk.png";
 import DoneIcon from "../../pics/correct.png";
+
 // icons
 import { FiberManualRecord, AlternateEmail, Report } from "@material-ui/icons";
 import { Link } from "react-router-dom";
-const useStyles = () => ({
-  avatar: {
-    height: 150,
-    width: 150,
-    background: "#dedada0f",
-  },
-  img: {
-    width: "auto",
-    height: "50%",
-  },
-  textField: {
-    maxWidth: 240,
-    minWidth: 240,
-    "& label": {
-      color: "#bfb9b9ed",
-    },
-    "& label.Mui-focused": {
-      color: "white",
-    },
-    "& .MuiInput-underline::before": {
-      borderBottom: "1px solid rgba(130, 125, 125, 0.42)",
-    },
-    "& .MuiInput-underline::after": {
-      borderBottom: "1px solid rgba(205, 198, 198, 0.64)",
-    },
-    "& .MuiInput-underline:hover:not(.Mui-disabled)::before": {
-      borderBottom: "1px solid rgba(197, 191, 191, 0.87)",
-    },
-    "& .MuiInputBase-root": {
-      color: "rgba(211, 200, 200, 0.87)",
-    },
-    "& p": {
-      color: "rgba(189, 182, 182, 0.7)",
-    },
-  },
-  customCheckBox: {
-    color: "#afb3d3 !important",
-  },
-  button: {
-    color: "#b8b8b8",
-    fontSize: "0.8em",
-    maxWidth: 280,
-    minWidth: 280,
-    textTransform: "none",
-  },
-  outlined: {
-    border: "1px solid rgba(197, 180, 180, 0.62)",
-    padding: "3px 20px",
-  },
-  toolTipper: {
-    fontSize: "0.8em",
-  },
-  buttonDisabled: {
-    color: "#a0a7a09e !important",
-    border: "1px solid rgba(244, 240, 240, 0.23)",
-  },
-  outlined: {
-    border: "1px solid rgba(197, 180, 180, 0.62)",
-    padding: "3px 20px",
-  },
-});
+
+// Get value based on Input
 function getCookie(name) {
   var value = "; " + document.cookie;
   var parts = value.split("; " + name + "=");
   if (parts.length >= 2) return parts.pop().split(";").shift();
 }
+
 class ForgotPassword extends Component {
   state = {
     radioValue: 0,
@@ -97,6 +37,7 @@ class ForgotPassword extends Component {
     isMailSending: false,
     isReMailSending: false,
   };
+
   handleEmail = (method) => {
     this.setState({ isLoading: true });
     if (method === "resend") {
@@ -133,7 +74,7 @@ class ForgotPassword extends Component {
           return response.json();
         })
         .then((resp) => {
-          this.setState({isReMailSending:false})
+          this.setState({ isReMailSending: false });
           setTimeout(() => {
             setTimeout(() => this.setState({ isLoading: false }), 1000);
             if (this.state.isSendCorrect) {
@@ -169,6 +110,7 @@ class ForgotPassword extends Component {
       this.setState({ isMailCorrect: false });
     }
   };
+
   checkMail = () => {
     // Check mail regex
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -176,6 +118,7 @@ class ForgotPassword extends Component {
     // Request to API here
     return true;
   };
+
   render() {
     return (
       <section className="login">
@@ -319,29 +262,5 @@ class ForgotPassword extends Component {
     );
   }
 }
-const CustomRadio = withStyles({
-  root: {
-    color: "#9fa59f",
-    "&$checked": {
-      color: "#c9d2c9",
-    },
-  },
-  checked: {},
-})((props) => <Radio color="default" {...props} />);
-const LinearProgBar = withStyles((theme) => ({
-  root: {
-    height: 3,
-    maxHeight: 3,
-    position: "absolute",
-    top: 0,
-    width: "100%",
-  },
-  colorPrimary: {
-    backgroundColor: "#393939",
-  },
-  bar: {
-    backgroundColor: "#b9c2cb",
-  },
-}))(LinearProgress);
 
-export default withStyles(useStyles)(ForgotPassword);
+export default withStyles(ForgotStyles)(ForgotPassword);

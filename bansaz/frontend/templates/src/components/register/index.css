@@ -1,0 +1,96 @@
+.registerForm {
+  min-height: 750px;
+  width: 450px;
+  display: grid;
+  grid-template: auto / 1fr 5fr;
+  padding: 0px 80px 0px 0px;
+  margin: auto;
+  border-radius: 0px 0px 40px 10px;
+  background-color: #404040e6;
+  position: relative;
+  box-sizing: border-box;
+  top: 100px;
+}
+.Avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.controlBar {
+  position: relative;
+  justify-self: end;
+}
+
+.controlBar button {
+  margin-right: 10px;
+}
+.accountOptions {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.9em;
+}
+.accountOptions a {
+  margin-top: 10px;
+}
+.accountOptions a:hover {
+  color: #a9a2a2;
+}
+.reg2 {
+  justify-items: end;
+}
+.reg3 {
+  font-size: 0.9em;
+  color: #e6dede;
+}
+.reg3,
+.reg2 {
+  grid-gap: 30px;
+  align-content: center;
+}
+.reg2 .Avatar,
+.reg3 .Avatar {
+  position: absolute;
+  top: 40px;
+  justify-self: center;
+}
+.swipeItem {
+  display: grid;
+  grid-template: auto / 1fr;
+  justify-items: center;
+  height: 100%;
+  width: 100%;
+}
+.registerForm > div:first-of-type,
+.registerForm > div > div:first-of-type {
+  height: 100%;
+  overflow: hidden;  
+}
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.err {
+  color: #f0554e;
+  border-left: 2px solid #d5504a;
+  display: inline-flex;
+  align-items: center;
+  padding-left: 10px;
+  position: relative;
+  font-size: 0.8em;
+  min-width: 250px;
+}
+@media only screen and (max-width: 500px) {
+  .registerForm {
+    border-radius: 0;
+    top: 0;
+  }
+  .registerForm {
+    height: 150vh;
+    width: 100vw;
+    padding: 0;
+  }
+}

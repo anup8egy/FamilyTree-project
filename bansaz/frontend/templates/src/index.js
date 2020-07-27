@@ -1,11 +1,15 @@
 import React from "react";
-import { hydrate, render } from "react-dom";
+import ReactDOM from "react-dom";
 import App from "./App";
 import "./fonts/fonts.css";
 
+import { Provider } from "react-redux";
+import Store from "./store";
+
 const rootElement = document.getElementById("root");
-if (rootElement.hasChildNodes()) {
-  hydrate(<App />, rootElement);
-} else {
-  render(<App />, rootElement);
-}
+ReactDOM.render(
+  <Provider store={Store}>
+    <App />
+  </Provider>,
+  rootElement
+);

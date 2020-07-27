@@ -1,0 +1,45 @@
+.add_input_field_dialog__comp {
+  color: white;
+  font-size: 1.5em;
+  font-family: BoldJost !important;
+  padding: 15px 0px;
+}
+.input_add_input_field_dialog__comp {
+  width: 400px;
+  height: 40px;
+  border: none;
+  border-radius: 11px;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 20px;
+}
+.input_add_input_field_dialog__comp input {
+  background: transparent;
+  border: none;
+  width: 100%;
+  color: white;
+  font-size: 1.1em;
+  letter-spacing: 0.02em;
+  caret-color: #aea7a7b5;
+}
+.control_input_add_input_field_dialog__comp {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.message_profile_add_about_err,
+.message_profile_add_about_correct {
+  font-size: 0.8em;
+  padding-left: 10px;
+}
+.message_profile_add_about_err {
+  color: #bb2c2c;
+  border-left: 2px solid #8e0c0c;
+}
+.message_profile_add_about_correct {
+  color: #147514;
+  border-left: 2px solid #0a4a0a;
+}

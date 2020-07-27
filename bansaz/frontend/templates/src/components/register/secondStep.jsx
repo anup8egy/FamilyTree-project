@@ -1,35 +1,49 @@
 import React, { Component } from "react";
-import { Avatar, Button, Fab, Radio, Tooltip } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
+import {
+  Avatar,
+  Button,
+  Fab,
+  Radio,
+  Tooltip,
+  withStyles,
+} from "@material-ui/core";
+
 // pics
-import VerifyIcon from "../../pics/verified.png";
+import VerifyIcon from "./verified.png";
+
 // icons
 import { Drafts, Textsms, Send, Report } from "@material-ui/icons";
+
 function getCookie(name) {
   var value = "; " + document.cookie;
   var parts = value.split("; " + name + "=");
   if (parts.length >= 2) return parts.pop().split(";").shift();
 }
+
 class SecondStep extends Component {
   constructor(props) {
     super(props);
     this.toggleLoader = this.props.toggleLoader;
     this.setSwipe = this.props.setSwipe;
   }
+
   state = {
     radioValue: 0,
     showError: false,
     isAllRight: false,
   };
+
   getShortEmail = (value) => {
     let whereisAT = value.indexOf("@");
     let firstPart = value.slice(0, whereisAT < 3 ? whereisAT : 3);
     let secondPart = value.slice(whereisAT, value.length);
     return `${firstPart}...${secondPart}`;
   };
+
   getShortPhone = (value) => {
     return `${String(value).slice(0, 3)}....`;
   };
+
   sendMail = () => {
     this.toggleLoader(true);
     let csrf_store;
@@ -77,6 +91,7 @@ class SecondStep extends Component {
       // Send code on phone
     }
   };
+
   render() {
     return (
       <div className="swipeItem reg2">
@@ -90,6 +105,7 @@ class SecondStep extends Component {
             src={VerifyIcon}
           />
         </div>
+
         <div>
           <Button
             variant="outlined"
@@ -109,6 +125,7 @@ class SecondStep extends Component {
             <GreenRadio checked={this.state.radioValue === 0} name="send" />
           </Button>
         </div>
+
         <div>
           <Tooltip
             title="Unavailable now"
@@ -156,6 +173,7 @@ class SecondStep extends Component {
     );
   }
 }
+
 const GreenRadio = withStyles({
   root: {
     color: "#9fa59f",
@@ -165,4 +183,5 @@ const GreenRadio = withStyles({
   },
   checked: {},
 })((props) => <Radio color="default" {...props} />);
+
 export default SecondStep;

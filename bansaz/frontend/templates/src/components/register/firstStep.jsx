@@ -10,16 +10,21 @@ import {
   ConfirmationNumber,
   Report,
 } from "@material-ui/icons";
-import PhoneCode from "./countriesPhone";
 import { Link } from "react-router-dom";
-import SettingsLogo from "../../pics/add.png";
+
+import PhoneCode from "./countriesPhone";
 import CountriesList from "./countryList.json";
+
+// Pics
+import SettingsLogo from "./add.png";
+
 const getPhoneCodeFromCountryCode = (countryCode) => {
   let findCountryCode = (value) => value.code === countryCode;
   let reqObject = CountriesList.list.find(findCountryCode);
   if (reqObject === undefined || typeof reqObject === undefined) return "977";
   return reqObject.phone;
 };
+
 class RegisterFirstStep extends Component {
   constructor(props) {
     super(props);
@@ -35,6 +40,7 @@ class RegisterFirstStep extends Component {
     this.firstNext = this.props.firstNextClick;
     this.setUsername = this.props.setUsername;
   }
+
   handleOnEnter = (e) => {
     e.preventDefault();
     if (e.keyCode === 13) this.firstNext();
@@ -43,6 +49,7 @@ class RegisterFirstStep extends Component {
     return (
       <div className="swipeItem">
         {/* User ID */}
+
         <div className="Avatar">
           <Avatar
             classes={{
@@ -54,6 +61,7 @@ class RegisterFirstStep extends Component {
           />
         </div>
         {/* Full Name Here */}
+
         <div className="uId">
           <TextField
             disabled={this.props.isFirstStepAllRight}
@@ -76,7 +84,9 @@ class RegisterFirstStep extends Component {
             }}
           />
         </div>
+
         {/* Last Name */}
+
         <div className="uId">
           <TextField
             disabled={this.props.isFirstStepAllRight}
@@ -99,7 +109,9 @@ class RegisterFirstStep extends Component {
             }}
           />
         </div>
+
         {/* Username */}
+
         <div className="uId">
           <TextField
             disabled={this.props.isFirstStepAllRight}
@@ -126,7 +138,9 @@ class RegisterFirstStep extends Component {
             }}
           />
         </div>
+
         {/* Email Address Here */}
+
         <div className="uId">
           <TextField
             label="Email"
@@ -151,7 +165,9 @@ class RegisterFirstStep extends Component {
             }}
           />
         </div>
+
         {/* Country Select */}
+
         <div className="uId">
           <PhoneCode
             setPhoneCode={this.setPhoneCode}
@@ -162,7 +178,9 @@ class RegisterFirstStep extends Component {
             country={this.props.country}
           />
         </div>
+
         {/* PhoneNumber */}
+
         <div className="uId">
           <TextField
             label="Phone Number"
@@ -189,7 +207,9 @@ class RegisterFirstStep extends Component {
             }}
           />
         </div>
+
         {/* Password enter */}
+
         <div className="uId">
           <TextField
             disabled={this.props.isFirstStepAllRight}
@@ -232,7 +252,9 @@ class RegisterFirstStep extends Component {
             }}
           />
         </div>
+
         {/* Confirm Passowrd */}
+
         <div className="uId">
           <TextField
             label="Confirm Password"
@@ -258,6 +280,7 @@ class RegisterFirstStep extends Component {
             }}
           />
         </div>
+
         {this.props.showError ? (
           <div className="err">
             <Report />
@@ -266,6 +289,7 @@ class RegisterFirstStep extends Component {
         ) : (
           ""
         )}
+
         <div className="controlBar">
           <Button
             disabled={this.props.isFirstStepAllRight}
@@ -276,6 +300,7 @@ class RegisterFirstStep extends Component {
             Next
           </Button>
         </div>
+
         <div className="accountOptions">
           <Link to="/login">Login instead</Link>
         </div>

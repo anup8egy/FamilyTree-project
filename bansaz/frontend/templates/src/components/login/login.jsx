@@ -1,67 +1,41 @@
 import React, { Component } from "react";
-import "../../style/login.css";
 import {
   Avatar,
   TextField,
   InputAdornment,
   Button,
-  LinearProgress,
   Checkbox,
 } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
-import AnimatedBackground from "../animatedBackground";
+import { withStyles } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import Swipe from "react-swipeable-views";
 import { Helmet } from "react-helmet";
+
+import AnimatedBackground from "./../AnimateBackground/index";
+import LinearProgBar from "./LinearProgress";
+
+import "./index.css";
+import LoginStyles from "./styles";
+
 // Icons
 import { Person, Report, VpnKey } from "@material-ui/icons";
+
 // Pics
 import UserLogo from "../../pics/password.png";
 import KeyLogo from "../../pics/smart-key.png";
-const useStyles = () => ({
-  avatar: {
-    height: 150,
-    width: 150,
-    background: "#dedada0f",
-  },
-  img: {
-    width: "auto",
-    height: "50%",
-  },
-  textField: {
-    "& label": {
-      color: "#bfb9b9ed",
-    },
-    "& label.Mui-focused": {
-      color: "white",
-    },
-    "& .MuiInput-underline::before": {
-      borderBottom: "1px solid rgba(130, 125, 125, 0.42)",
-    },
-    "& .MuiInput-underline::after": {
-      borderBottom: "1px solid rgba(205, 198, 198, 0.64)",
-    },
-    "& .MuiInput-underline:hover:not(.Mui-disabled)::before": {
-      borderBottom: "1px solid rgba(197, 191, 191, 0.87)",
-    },
-    "& .MuiInputBase-root": {
-      color: "rgba(211, 200, 200, 0.87)",
-    },
-  },
-  customCheckBox: {
-    color: "#afb3d3 !important",
-  },
-});
+
 function getCookie(name) {
   var value = "; " + document.cookie;
   var parts = value.split("; " + name + "=");
   if (parts.length >= 2) return parts.pop().split(";").shift();
 }
+
 class Login extends Component {
   constructor(props) {
     super(props);
     this.classes = this.props.classes;
   }
+
   state = {
     swipeIndex: 0,
     isLoading: false,
@@ -75,6 +49,7 @@ class Login extends Component {
     userMainError: false,
     passwordMainError: false,
   };
+
   handleUserID = () => {
     // To show loader on top
     this.setState({ isLoading: true });
@@ -96,6 +71,7 @@ class Login extends Component {
         break;
     }
   };
+
   sendRequestToUserLogin = () => {
     // Disabled all fields when entered
     this.setState({ isUserFieldDisabled: true });
@@ -151,6 +127,7 @@ class Login extends Component {
         this.setState({ isUserFieldDisabled: false });
       });
   };
+
   handlePassword = () => {
     // To show loader on top
     this.setState({ isLoading: true });
@@ -227,6 +204,7 @@ class Login extends Component {
     } else
       document.cookie = `__kul_ri=${token};eexpires=0;path="/";sameSite=Lax;`;
   };
+
   render() {
     return (
       <section className="login">
@@ -379,16 +357,5 @@ class Login extends Component {
     );
   }
 }
-const LinearProgBar = withStyles((theme) => ({
-  root: {
-    height: 3,
-    maxHeight: 3,
-  },
-  colorPrimary: {
-    backgroundColor: "#393939",
-  },
-  bar: {
-    backgroundColor: "#b9c2cb",
-  },
-}))(LinearProgress);
-export default withStyles(useStyles)(Login);
+
+export default withStyles(LoginStyles)(Login);
