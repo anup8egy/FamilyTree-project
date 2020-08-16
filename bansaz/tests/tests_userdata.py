@@ -68,66 +68,72 @@ class UserDataTest(APITestCase):
         self.assertEqual(json.loads(response.data)["profile_viewer"], "p")
         self.assertTrue("first_name" in json.loads(response.data))
 
-    # def test_account_settings_edit(self):
-    #     """ Check IF Account Setings Edit Api Works Corrctly"""
-    #     access_token = self.get_access_token()
+    def test_account_settings_edit(self):
+        """ Check IF Account Setings Edit Api Works Corrctly"""
+        access_token = self.get_access_token()
 
-    #     # Change First Name, Last Name
-    #     req_data = {"first_name": "Taste", "last_name": "People"}
-    #     response = self.client.post(
-    #         self.url_account_setting_edit,
-    #         req_data,
-    #         HTTP_AUTHORIZATION="Token " + access_token,
-    #     )
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(self.test_user.first_name, "Taste")
-    #     # Try to Change Email Without Sending PAssword
-    #     req_data = {"email": "handsome@go.com"}
-    #     response = self.client.post(
-    #         self.url_account_setting_edit,
-    #         req_data,
-    #         HTTP_AUTHORIZATION="Token " + access_token,
-    #     )
-    #     self.assertNotEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(self.test_user.email, "yubraj.bhadnari.hero@gmail.com")
+        # Change First Name, Last Name
+        req_data = {"first_name": "Taste", "last_name": "People"}
+        response = self.client.post(
+            self.url_account_setting_edit,
+            req_data,
+            HTTP_AUTHORIZATION="Token " + access_token,
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.test_user.refresh_from_db()
+        self.assertEqual(self.test_user.first_name, "Taste")
+        # Try to Change Email Without Sending PAssword
+        req_data = {"email": "handsome@go.com"}
+        response = self.client.post(
+            self.url_account_setting_edit,
+            req_data,
+            HTTP_AUTHORIZATION="Token " + access_token,
+        )
+        self.test_user.refresh_from_db()
+        self.assertNotEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.test_user.email, "yubraj.bhadnari.hero@gmail.com")
 
-    #     # Change Email of the User
-    #     req_data = {"email": "handsome@go.com", "password": "testpassword"}
-    #     response = self.client.post(
-    #         self.url_account_setting_edit,
-    #         req_data,
-    #         HTTP_AUTHORIZATION="Token " + access_token,
-    #     )
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(self.test_user.email, "handsome@go.com")
+        # Change Email of the User
+        req_data = {"email": "handsome@go.com", "password": "testpassword"}
+        response = self.client.post(
+            self.url_account_setting_edit,
+            req_data,
+            HTTP_AUTHORIZATION="Token " + access_token,
+        )
+        self.test_user.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.test_user.email, "handsome@go.com")
 
-    #     # Try to Change New Password Without Sending PAssword
-    #     req_data = {"new_password": "tastepassword"}
-    #     response = self.client.post(
-    #         self.url_account_setting_edit,
-    #         req_data,
-    #         HTTP_AUTHORIZATION="Token " + access_token,
-    #     )
-    #     self.assertNotEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertTrue(self.test_user.check_password("testpassword"))
+        # Try to Change New Password Without Sending PAssword
+        req_data = {"new_password": "tastepassword"}
+        response = self.client.post(
+            self.url_account_setting_edit,
+            req_data,
+            HTTP_AUTHORIZATION="Token " + access_token,
+        )
+        self.test_user.refresh_from_db()
+        self.assertNotEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(self.test_user.check_password("testpassword"))
 
-    #     # Try to Change New Password Sending Wrong PAssword
-    #     req_data = {"new_password": "tastepassword", "password": "wronmgd"}
-    #     response = self.client.post(
-    #         self.url_account_setting_edit,
-    #         req_data,
-    #         HTTP_AUTHORIZATION="Token " + access_token,
-    #     )
-    #     self.assertNotEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertTrue(self.test_user.check_password("testpassword"))
+        # Try to Change New Password Sending Wrong PAssword
+        req_data = {"new_password": "tastepassword", "password": "wronmgd"}
+        response = self.client.post(
+            self.url_account_setting_edit,
+            req_data,
+            HTTP_AUTHORIZATION="Token " + access_token,
+        )
+        self.test_user.refresh_from_db()
+        self.assertNotEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(self.test_user.check_password("testpassword"))
 
-    #     # Change New Password
-    #     req_data = {"new_password": "tastepassword", "password": "testpassword"}
-    #     response = self.client.post(
-    #         self.url_account_setting_edit,
-    #         req_data,
-    #         HTTP_AUTHORIZATION="Token " + access_token,
-    #     )
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertTrue(self.test_user.check_password("tastepassword"))
+        # Change New Password
+        req_data = {"new_password": "tastepassword", "password": "testpassword"}
+        response = self.client.post(
+            self.url_account_setting_edit,
+            req_data,
+            HTTP_AUTHORIZATION="Token " + access_token,
+        )
+        self.test_user.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(self.test_user.check_password("tastepassword"))
 
