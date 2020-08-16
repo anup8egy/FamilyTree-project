@@ -24,7 +24,7 @@ from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .serializers import UserSerializer, ProfileDataSerializer
+from .serializers import UserSerializer, ProfileDataSerializer, AccountSettingSerializer
 from django.contrib.auth.models import User
 
 
@@ -304,5 +304,81 @@ class UserProfileDataChange(APIView):
         return Response(
             json.dumps({"details": "Error Occurred"}),
             status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class AccountSettingsData(APIView):
+    permission_classes = [IsAuthenticated]
+
+    class AccountSettings:
+        """Custom Object to make things work with serializer!! """
+
+        def __init__(self, user):
+            if not isinstance(user, User):
+                raise TypeError("a User instance must be passed.")
+            self.first_name = user.first_name
+            self.last_name = user.last_name
+            self.email = user.email
+            self.get_mail_about_login = user.profile.get_mail_about_login
+            self.profile_viewer = user.profile.profile_viewer
+            self.searchable_group = user.profile.searchable_group
+
+    @method_decorator(csrf_exempt)
+    def post(self, request):
+        if request.user:
+            account_settings_object = self.AccountSettings(request.user)
+            data = AccountSettingSerializer(account_settings_object).data
+            return Response(json.dumps(data))
+        return Response(
+            json.dumps({"detail": "Error Occured"}), status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+class AccountSettingsDataChange(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @method_decorator(csrf_exempt)
+    def post(self, request):
+        if request.user:
+            # Verify Password if user tries to set New Password.
+            if "new_password" in request.data:
+                try:
+                    user_password = request.data["password"]
+                except Exception:
+                    return Response(
+                        json.dumps({"details": "No Password Field"}),
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
+                if request.user.check_password(user_password):
+                    request.user.set_password(request.data["new_password"])
+                else:
+                    return Response(
+                        json.dumps({"details": "Error Occured"}),
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+            update = AccountSettingSerializer(request.user, data=request.data)
+            if update.is_valid():
+                # Verify Password if user tries to change the email.
+                if "email" in request.data:
+                    try:
+                        user_password = request.data["password"]
+                    except Exception:
+                        return Response(
+                            json.dumps({"details": "No Password Field"}),
+                            status=status.HTTP_403_FORBIDDEN,
+                        )
+                    if request.user.check_password(user_password):
+                        update.save()
+                    else:
+                        return Response(
+                            json.dumps({"details": "Error Occured"}),
+                            status=status.HTTP_400_BAD_REQUEST,
+                        )
+
+                update.save()
+                return Response(json.dumps({"Updated": True}))
+        return Response(
+            json.dumps({"detail": "Error Occured"}), status=status.HTTP_400_BAD_REQUEST
         )
 

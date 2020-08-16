@@ -321,6 +321,8 @@ class Profile(models.Model):
     forget_password_token_code = models.CharField(max_length=80, null=True, blank=True)
     forget_password_token_expiration = models.DateTimeField(null=True, blank=True)
 
+    # PROFILE INFORMATIONS
+    # -----------------------------
     picture = models.ImageField(
         "Image", upload_to="images/", blank=True, null=True, validators=[validate_image]
     )
@@ -334,6 +336,14 @@ class Profile(models.Model):
     phone_numbers = MyArrayField(max_length=50, blank=True, null=True)
     emails = MyArrayField(max_length=50, blank=True, null=True)
     gender = models.CharField(max_length=8, blank=True, null=True)
+
+    # Acount Settings INFORMATION
+    # -----------------------------
+    VIEWER_GROUP = [("o", "only me"), ("r", "related"), ("p", "public")]
+    get_mail_about_login = models.BooleanField(default=False)
+    searchable_group = models.CharField(max_length=1, choices=VIEWER_GROUP, default="p")
+    profile_viewer = models.CharField(max_length=1, choices=VIEWER_GROUP, default="p")
+    # is_deleted = models.BooleanField(default=False) Used user.is_active
 
     def __str__(self):
         return "{}, activated:{} ".format(self.user, self.account_activated)

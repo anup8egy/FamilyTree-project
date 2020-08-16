@@ -31,6 +31,16 @@ urlpatterns = [
         views.UserProfileDataChange.as_view(),
         name="user_profile_edit",
     ),
+    path(
+        "user-data/account_settings",
+        views.AccountSettingsData.as_view(),
+        name="account_setting_view",
+    ),
+    path(
+        "user-data/account_settings/edit",
+        views.AccountSettingsDataChange.as_view(),
+        name="account_setting_edit",
+    ),
 ]
 urlpatterns += [
     re_path(r"(?P<path>.*)", FrontEndView.as_view()),

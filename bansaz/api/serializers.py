@@ -91,3 +91,30 @@ class ProfileDataSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
+class AccountSettingSerializer(serializers.Serializer):
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+    email = serializers.EmailField(required=False)
+    get_mail_about_login = serializers.BooleanField(required=False)
+    profile_viewer = serializers.CharField(required=False)
+    searchable_group = serializers.CharField(required=False)
+
+    def update(self, instance, validated_data):
+        instance.first_name = validated_data.get("first_name", instance.first_name)
+        instance.last_name = validated_data.get("last_name", instance.last_name)
+        instance.email = validated_data.get("email", instance.email)
+        instance.profile.get_mail_about_login = validated_data.get(
+            "get_mail_about_login", instance.profile.get_mail_about_login
+        )
+        instance.profile.profile_viewer = validated_data.get(
+            "profile_viewer", instance.profile.profile_viewer
+        )
+        instance.profile.searchable_group = validated_data.get(
+            "searchable_group", instance.profile.searchable_group
+        )
+
+        instance.profile.save()
+        instance.save()
+        return instance
+
