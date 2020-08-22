@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, Clan, Staffmap
+from rest_framework.relations import RelatedField
+from django.utils.translation import gettext_lazy as _
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -118,3 +120,65 @@ class AccountSettingSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+
+class ClanORStaffMapDashboardDataSerializer(serializers.Serializer):
+    tree_type = serializers.CharField()
+    name = serializers.CharField()
+    owner = serializers.CharField()
+    date_created = serializers.DateField()
+
+
+class UsernameRelatedField(RelatedField):
+    default_error_messages = {
+        "required": _("This field is required."),
+        "does_not_exist": _(
+            'Invalid username "{username_value}" - object does not exist.'
+        ),
+        "incorrect_type": _("Incorrect type. Expected pk value, received {data_type}."),
+    }
+
+    def to_internal_value(self, data):
+        data = str(data)
+        try:
+            return self.get_queryset().get(username=data)
+        except ObjectDoesNotExist:
+            self.fail("does_not_exist", username_value=data)
+        except (TypeError, ValueError):
+            self.fail("incorrect_type", data_type=type(data).__name__)
+
+    def to_representation(self, value):
+        return str(value.username)
+
+
+class ClanSerializer(serializers.ModelSerializer):
+    owner = serializers.StringRelatedField()
+    admins = UsernameRelatedField(many=True, queryset=User.objects.all())
+    viewable_to = UsernameRelatedField(many=True, queryset=User.objects.all())
+
+    class Meta:
+        model = Clan
+        fields = "__all__"
+        read_only_fields = ["id", "owner"]
+        extra_kwargs = {
+            "name": {"required": False},
+            "admins": {"required": False},
+            "description": {"required": False},
+            "viewable_to": {"required": False},
+        }
+
+
+class StaffMapSerializer(serializers.ModelSerializer):
+    owner = serializers.StringRelatedField()
+    admins = serializers.StringRelatedField(many=True)
+    viewable_to = UsernameRelatedField(many=True, queryset=User.objects.all())
+
+    class Meta:
+        model = Staffmap
+        fields = "__all__"
+        read_only_fields = ["id", "owner"]
+        extra_kwargs = {
+            "name": {"required": False},
+            "admins": {"required": False},
+            "description": {"required": False},
+            "viewable_to": {"required": False},
+        }

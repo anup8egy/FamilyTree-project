@@ -387,6 +387,9 @@ class Clan(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def tree_type(self):
+        return "Family_clan"
 
 class Staffmap(models.Model):
     name = models.CharField(max_length=30)
@@ -407,6 +410,10 @@ class Staffmap(models.Model):
     def __str__(self):
         return self.name
 
+
+    @property
+    def tree_type(self):
+        return "Staffmap"
 
 class Person(models.Model):
     name = models.CharField(max_length=30)

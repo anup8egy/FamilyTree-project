@@ -24,7 +24,14 @@ from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .serializers import UserSerializer, ProfileDataSerializer, AccountSettingSerializer
+from .serializers import (
+    UserSerializer,
+    ProfileDataSerializer,
+    AccountSettingSerializer,
+    ClanORStaffMapDashboardDataSerializer,
+    ClanSerializer,
+    StaffMapSerializer,
+)
 from django.contrib.auth.models import User
 
 
@@ -268,9 +275,15 @@ class UserDashboardData(APIView):
 
     @method_decorator(csrf_exempt)
     def post(self, request):
+        clan_queryset = request.user.admin_clans.all()
+        staffmap_queryset = request.user.admin_staffmaps.all()
+        clan_data = ClanORStaffMapDashboardDataSerializer(clan_queryset, many=True)
+        staffmap_data = ClanORStaffMapDashboardDataSerializer(
+            staffmap_queryset, many=True
+        )
+
         return Response(
-            json.dumps({"User Data Provided": True, "name": request.user.username}),
-            status=status.HTTP_200_OK,
+            json.dumps(clan_data + staffmap_data), status=status.HTTP_200_OK,
         )
 
 
@@ -382,3 +395,54 @@ class AccountSettingsDataChange(APIView):
             json.dumps({"detail": "Error Occured"}), status=status.HTTP_400_BAD_REQUEST
         )
 
+
+class CreateOrUpdateClanOrStaffmap(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if request.data["tree_type"] == "Family_clan":
+            serializer = ClanSerializer
+        elif request.data["tree_type"] == "Staffmap":
+            serializer = StaffMapSerializer
+        else:
+            return Response(
+                json.dumps({"details": "invalid_treetype"}),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        serialize_data = serializer(data=request.data)
+        if serialize_data.is_valid():
+            res = serialize_data.save(owner=request.user)
+            return Response(json.dumps(serializer(res)))
+        else:
+            return Response(serialize_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            json.dumps({"details": "Error Occured"}), status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def patch(self, request):
+        if request.data["tree_type"] == "Family_clan":
+            serializer = ClanSerializer
+            queryset = request.user.owner_clans.all()
+        elif request.data["tree_type"] == "Staffmap":
+            serializer = StaffMapSerializer
+            queryset = request.user.owner_staffmaps.all()
+        else:
+            return Response(
+                json.dumps({"details": "invalid_treetype"}),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            update_instance = queryset.get(name=request.data["name"])
+        except Exception:
+            return Response(json.dumps({"details": "invalid name field"}), status=400)
+        serialize_data = serializer(update_instance, data=request.data)
+        if serialize_data.is_valid():
+            res = serialize_data.save()
+            return Response(json.dumps(serializer(res)))
+        else:
+            return Response(serialize_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            json.dumps({"details": "Error Occured"}), status=status.HTTP_400_BAD_REQUEST
+        )
