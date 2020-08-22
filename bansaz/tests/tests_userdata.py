@@ -65,7 +65,7 @@ class UserDataTest(APITestCase):
             HTTP_AUTHORIZATION="Token " + access_token,
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.data)["profile_viewer"], "p")
+        self.assertEqual(json.loads(response.data)["profile_viewer"], "Public")
         self.assertTrue("first_name" in json.loads(response.data))
 
     def test_account_settings_edit(self):
