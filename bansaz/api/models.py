@@ -335,14 +335,25 @@ class Profile(models.Model):
     education_status = models.CharField(max_length=30, blank=True, null=True)
     phone_numbers = MyArrayField(max_length=50, blank=True, null=True)
     emails = MyArrayField(max_length=50, blank=True, null=True)
-    gender = models.CharField(max_length=8, blank=True, null=True)
+    GENDER_CHOICES = [("Male", "Male"), ("Female", "Female"), ("Other", "Other")]
+    gender = models.CharField(
+        max_length=8, choices=GENDER_CHOICES, blank=True, null=True
+    )
 
     # Acount Settings INFORMATION
     # -----------------------------
-    VIEWER_GROUP = [("o", "only me"), ("r", "related"), ("p", "public")]
+    VIEWER_GROUP = [
+        ("Only Me", "Only Me"),
+        ("Related", "Related"),
+        ("Public", "Public"),
+    ]
     get_mail_about_login = models.BooleanField(default=False)
-    searchable_group = models.CharField(max_length=1, choices=VIEWER_GROUP, default="p")
-    profile_viewer = models.CharField(max_length=1, choices=VIEWER_GROUP, default="p")
+    searchable_group = models.CharField(
+        max_length=10, choices=VIEWER_GROUP, default="Public"
+    )
+    profile_viewer = models.CharField(
+        max_length=10, choices=VIEWER_GROUP, default="Public"
+    )
     # is_deleted = models.BooleanField(default=False) Used user.is_active
 
     def __str__(self):
@@ -357,6 +368,95 @@ class Profile(models.Model):
         self.save()
 
 
+class Clan(models.Model):
+    name = models.CharField(max_length=30)
+    date_created = models.DateField(auto_now=True)
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="owner_clans"
+    )
+    admins = models.ManyToManyField(User, related_name="admin_clans")
+    description = models.TextField()
+    VIEWER_GROUP = [
+        ("Admins", "Admins"),
+        ("Selected", "Selected"),
+        ("Public", "Public"),
+    ]
+    viewers = models.CharField(max_length=10, choices=VIEWER_GROUP, default="Public")
+    viewable_to = models.ManyToManyField(User, related_name="viewable_to", blank=True,)
+
+    def __str__(self):
+        return self.name
+
+
+class Staffmap(models.Model):
+    name = models.CharField(max_length=30)
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="owner_staffmaps"
+    )
+    date_created = models.DateField(auto_now=True)
+    admins = models.ManyToManyField(User, related_name="admin_staffmaps")
+    description = models.TextField()
+    VIEWER_GROUP = [
+        ("Admins", "Admins"),
+        ("Selected", "Selected"),
+        ("Public", "Public"),
+    ]
+    viewers = models.CharField(max_length=10, choices=VIEWER_GROUP, default="Public")
+    viewable_to = models.ManyToManyField(User, related_name="viewble_to", blank=True,)
+
+    def __str__(self):
+        return self.name
+
+
 class Person(models.Model):
     name = models.CharField(max_length=30)
+    GENDER_CHOICES = [("Male", "Male"), ("Female", "Female"), ("Other", "Other")]
+    gender = models.CharField(
+        max_length=8, choices=GENDER_CHOICES, blank=True, null=True
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Relation(models.Model):
+    name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
+
+
+class ClanPersonRelation(models.Model):
+    first_person = models.ForeignKey(
+        Person, on_delete=models.CASCADE, related_name="first_persons"
+    )
+    second_person = models.ForeignKey(
+        Person, on_delete=models.CASCADE, related_name="second_persons"
+    )
+    clan = models.ForeignKey(Clan, on_delete=models.CASCADE, related_name="relations")
+    relation = models.ForeignKey(
+        Relation, on_delete=models.CASCADE, related_name="clanpersons"
+    )
+
+    def __str__(self):
+        return "{} is {} of {} in {} ".format(
+            self.second_person, self.relation, self.first_person, self.clan,
+        )
+
+
+class RelationCalc(models.Model):
+    first_relation = models.ForeignKey(
+        Relation, on_delete=models.CASCADE, related_name="first_relationcalc"
+    )
+    second_relation = models.ForeignKey(
+        Relation, on_delete=models.CASCADE, related_name="second_relationcalc"
+    )
+    result_relation = models.ForeignKey(
+        Relation, on_delete=models.CASCADE, related_name="result_relationcalc"
+    )
+
+    def __str__(self):
+        return "{}'s {} is {}".format(
+            self.first_relation, self.second_relation, self.result_relation
+        )
 
