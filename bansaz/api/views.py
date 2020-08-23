@@ -277,11 +277,11 @@ class UserDashboardData(APIView):
     def post(self, request):
         clan_queryset = request.user.admin_clans.all()
         staffmap_queryset = request.user.admin_staffmaps.all()
-        clan_data = ClanORStaffMapDashboardDataSerializer(clan_queryset, many=True)
+        clan_data = ClanORStaffMapDashboardDataSerializer(clan_queryset, many=True).data
         staffmap_data = ClanORStaffMapDashboardDataSerializer(
             staffmap_queryset, many=True
-        )
-
+        ).data
+        print(json.dumps(clan_data + staffmap_data))
         return Response(
             json.dumps(clan_data + staffmap_data), status=status.HTTP_200_OK,
         )
