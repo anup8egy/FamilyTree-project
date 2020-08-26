@@ -20,9 +20,9 @@ urlpatterns = [
         name="request_forget_password_verification",
     ),
     path("auth/logout", views.LogoutUser.as_view(), name="logout_user"),
-    path(
-        "user-data/dashboard", views.UserDashboardData.as_view(), name="user_dashboard"
-    ),
+    # path(
+    #     "user-data/dashboard", views.UserDashboardData.as_view(), name="user_dashboard"
+    # ),
     path(
         "user-data/profile", views.UserProfileData.as_view(), name="user_profile_view"
     ),
@@ -40,6 +40,10 @@ urlpatterns = [
         "user-data/account_settings/edit",
         views.AccountSettingsDataChange.as_view(),
         name="account_setting_edit",
+    ),
+    path("user-data/trees", views.AllTreesData.as_view(), name="trees_data",),
+    path(
+        "user-data/trees/edit", views.CreateOrUpdateTrees.as_view(), name="trees_edit",
     ),
 ]
 urlpatterns += [

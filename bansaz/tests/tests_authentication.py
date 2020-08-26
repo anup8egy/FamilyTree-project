@@ -27,7 +27,7 @@ class AccountsTest(APITestCase):
         self.login_password_url = reverse("password_login")
         self.request_email_verification_url = reverse("request_email_verification")
         self.token_refresh_url = reverse("token_refresh")
-        self.user_dashboard_url = reverse("user_dashboard")
+        self.user_trees = reverse("trees_data")
         self.logout_user_url = reverse("logout_user")
 
     def check_tokens(self, response):
@@ -151,7 +151,7 @@ class AccountsTest(APITestCase):
 
         # Try sending with authorization header
         response1 = self.client.post(
-            self.user_dashboard_url,
+            self.user_trees,
             data=None,
             HTTP_AUTHORIZATION="Token " + json.loads(response.data)["token"],
         )
@@ -162,7 +162,7 @@ class AccountsTest(APITestCase):
 
         # Check after changing token_secret same last token doesnot works
         response = self.client.post(
-            self.user_dashboard_url,
+            self.user_trees,
             data=None,
             HTTP_AUTHORIZATION="Token " + json.loads(response.data)["token"],
         )
@@ -181,7 +181,7 @@ class AccountsTest(APITestCase):
 
         # Send new access token as authorization where everything goes well aka 200 OK
         response = self.client.post(
-            self.user_dashboard_url,
+            self.user_trees,
             data=None,
             HTTP_AUTHORIZATION="Token " + json.loads(new_response.data)["token"],
         )
@@ -198,7 +198,7 @@ class AccountsTest(APITestCase):
         # self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # response = self.client.post(
-        #     self.user_dashboard_url,
+        #     self.user_trees,
         #     data=None,
         #     HTTP_AUTHORIZATION="Token " + json.loads(new_response.data)["token"],
         # )

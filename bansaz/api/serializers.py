@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
-from .models import Profile, Clan, Staffmap
+from .models import Profile, Clan, Staffmap, Person
 from rest_framework.relations import RelatedField
 from django.utils.translation import gettext_lazy as _
 
@@ -126,6 +126,7 @@ class ClanORStaffMapDashboardDataSerializer(serializers.Serializer):
     name = serializers.CharField()
     owner = serializers.CharField()
     date_created = serializers.DateField()
+    id = serializers.IntegerField()
 
 
 class UsernameRelatedField(RelatedField):
@@ -152,8 +153,12 @@ class UsernameRelatedField(RelatedField):
 
 class ClanSerializer(serializers.ModelSerializer):
     owner = serializers.StringRelatedField()
-    admins = UsernameRelatedField(many=True, queryset=User.objects.all())
-    viewable_to = UsernameRelatedField(many=True, queryset=User.objects.all())
+    admins = UsernameRelatedField(
+        many=True, queryset=User.objects.all(), required=False
+    )
+    viewable_to = UsernameRelatedField(
+        many=True, queryset=User.objects.all(), required=False
+    )
 
     class Meta:
         model = Clan
@@ -161,16 +166,18 @@ class ClanSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "owner"]
         extra_kwargs = {
             "name": {"required": False},
-            "admins": {"required": False},
             "description": {"required": False},
-            "viewable_to": {"required": False},
         }
 
 
 class StaffMapSerializer(serializers.ModelSerializer):
     owner = serializers.StringRelatedField()
-    admins = serializers.StringRelatedField(many=True)
-    viewable_to = UsernameRelatedField(many=True, queryset=User.objects.all())
+    admins = UsernameRelatedField(
+        many=True, queryset=User.objects.all(), required=False
+    )
+    viewable_to = UsernameRelatedField(
+        many=True, queryset=User.objects.all(), required=False
+    )
 
     class Meta:
         model = Staffmap
@@ -178,7 +185,16 @@ class StaffMapSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "owner"]
         extra_kwargs = {
             "name": {"required": False},
-            "admins": {"required": False},
             "description": {"required": False},
-            "viewable_to": {"required": False},
+        }
+
+
+class PersonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Person
+        fields = "__all__"
+        read_only_fields = ["id"]
+        extra_kwargs = {
+            "name": {"required": False},
+            "gender": {"required": False},
         }

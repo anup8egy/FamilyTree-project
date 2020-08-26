@@ -374,7 +374,7 @@ class Clan(models.Model):
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="owner_clans"
     )
-    admins = models.ManyToManyField(User, related_name="admin_clans")
+    admins = models.ManyToManyField(User, related_name="admin_clans", blank=True)
     description = models.TextField()
     VIEWER_GROUP = [
         ("Admins", "Admins"),
@@ -397,7 +397,7 @@ class Staffmap(models.Model):
         User, on_delete=models.CASCADE, related_name="owner_staffmaps"
     )
     date_created = models.DateField(auto_now=True)
-    admins = models.ManyToManyField(User, related_name="admin_staffmaps")
+    admins = models.ManyToManyField(User, related_name="admin_staffmaps",  blank=True)
     description = models.TextField()
     VIEWER_GROUP = [
         ("Admins", "Admins"),
@@ -427,7 +427,7 @@ class Person(models.Model):
 
 
 class Relation(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
 
     def __str__(self):
         return self.name

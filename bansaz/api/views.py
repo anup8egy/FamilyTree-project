@@ -267,26 +267,6 @@ class LogoutUser(APIView):
 """ Registration Completed (Oauth and Captcha left )"""
 
 
-class UserDashboardData(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        return Response(json.dumps({"Test": True}))
-
-    @method_decorator(csrf_exempt)
-    def post(self, request):
-        clan_queryset = request.user.admin_clans.all()
-        staffmap_queryset = request.user.admin_staffmaps.all()
-        clan_data = ClanORStaffMapDashboardDataSerializer(clan_queryset, many=True).data
-        staffmap_data = ClanORStaffMapDashboardDataSerializer(
-            staffmap_queryset, many=True
-        ).data
-        print(json.dumps(clan_data + staffmap_data))
-        return Response(
-            json.dumps(clan_data + staffmap_data), status=status.HTTP_200_OK,
-        )
-
-
 class UserProfileData(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -396,13 +376,65 @@ class AccountSettingsDataChange(APIView):
         )
 
 
-class CreateOrUpdateClanOrStaffmap(APIView):
+class AllTreesData(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @method_decorator(csrf_exempt)
+    def post(self, request):
+        if "tree_type" in request.data:
+            if not (
+                (request.data["tree_type"] == "family_clan")
+                or (request.data["tree_type"] == "staffmap")
+            ):
+                return Response(
+                    json.dumps({"details": "Invalid tree type"}),
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            queryset = (
+                (
+                    request.user.owner_clans.all() | request.user.admin_clans.all()
+                ).distinct()
+                if request.data["tree_type"] == "family_clan"
+                else (
+                    request.user.owner_staffmaps.all()
+                    | request.user.admin_staffmaps.all()
+                ).distinct()
+            )
+            data = ClanORStaffMapDashboardDataSerializer(queryset, many=True).data
+            if "id" in request.data:
+                try:
+                    queryset = queryset.get(id=request.data["id"])
+                except Exception:
+                    return Response(
+                        json.dumps({"detail": "Invalid id field"}), status=400
+                    )
+
+                data = ClanORStaffMapDashboardDataSerializer(queryset).data
+
+            return Response(json.dumps(data))
+
+        clan_queryset = (
+            request.user.owner_clans.all() | request.user.admin_clans.all()
+        ).distinct()
+        staffmap_queryset = (
+            request.user.owner_staffmaps.all() | request.user.admin_staffmaps.all()
+        ).distinct()
+        clan_data = ClanORStaffMapDashboardDataSerializer(clan_queryset, many=True).data
+        staffmap_data = ClanORStaffMapDashboardDataSerializer(
+            staffmap_queryset, many=True
+        ).data
+        return Response(
+            json.dumps(clan_data + staffmap_data), status=status.HTTP_200_OK,
+        )
+
+
+class CreateOrUpdateTrees(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        if request.data["tree_type"] == "Family_clan":
+        if request.data["tree_type"] == "family_clan":
             serializer = ClanSerializer
-        elif request.data["tree_type"] == "Staffmap":
+        elif request.data["tree_type"] == "staffmap":
             serializer = StaffMapSerializer
         else:
             return Response(
@@ -412,7 +444,7 @@ class CreateOrUpdateClanOrStaffmap(APIView):
         serialize_data = serializer(data=request.data)
         if serialize_data.is_valid():
             res = serialize_data.save(owner=request.user)
-            return Response(json.dumps(serializer(res)))
+            return Response(json.dumps(serializer(res).data))
         else:
             return Response(serialize_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -421,25 +453,29 @@ class CreateOrUpdateClanOrStaffmap(APIView):
         )
 
     def patch(self, request):
-        if request.data["tree_type"] == "Family_clan":
+        if request.data["tree_type"] == "family_clan":
             serializer = ClanSerializer
-            queryset = request.user.owner_clans.all()
-        elif request.data["tree_type"] == "Staffmap":
+            queryset = (
+                request.user.owner_clans.all() | request.user.admin_clans.all()
+            ).distinct()
+        elif request.data["tree_type"] == "staffmap":
             serializer = StaffMapSerializer
-            queryset = request.user.owner_staffmaps.all()
+            queryset = (
+                request.user.owner_staffmaps.all() | request.user.admin_staffmaps.all()
+            ).distinct()
         else:
             return Response(
                 json.dumps({"details": "invalid_treetype"}),
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
-            update_instance = queryset.get(name=request.data["name"])
+            update_instance = queryset.get(id=request.data["id"])
         except Exception:
-            return Response(json.dumps({"details": "invalid name field"}), status=400)
+            return Response(json.dumps({"details": "invalid id field"}), status=400)
         serialize_data = serializer(update_instance, data=request.data)
         if serialize_data.is_valid():
             res = serialize_data.save()
-            return Response(json.dumps(serializer(res)))
+            return Response(json.dumps(serializer(res).data))
         else:
             return Response(serialize_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
