@@ -41,10 +41,16 @@ urlpatterns = [
         views.AccountSettingsDataChange.as_view(),
         name="account_setting_edit",
     ),
-    path("user-data/trees", views.AllTreesData.as_view(), name="trees_data",),
+    path("trees", views.AllTreesData.as_view(), name="trees_data",),
+    path("trees/edit", views.CreateOrUpdateTrees.as_view(), name="trees_edit",),
+    path("person", views.PersonView.as_view(), name="person_data"),
+    path("relation", views.RelationsView.as_view(), name="relation_data"),
     path(
-        "user-data/trees/edit", views.CreateOrUpdateTrees.as_view(), name="trees_edit",
+        "relation-calculator",
+        views.RelationCalculatorView.as_view(),
+        name="relation_calculator",
     ),
+    path("clan-data", views.ClanPersonRelationView.as_view(), name="clan_data"),
 ]
 urlpatterns += [
     re_path(r"(?P<path>.*)", FrontEndView.as_view()),

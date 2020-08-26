@@ -31,7 +31,12 @@ from .serializers import (
     ClanORStaffMapDashboardDataSerializer,
     ClanSerializer,
     StaffMapSerializer,
+    PersonSerializer,
+    RelationCalculatorSerializer,
+    RelationSerializer,
+    ClanPersonRelationSerializer,
 )
+from .models import Person, Relation, RelationCalc, ClanPersonRelation
 from django.contrib.auth.models import User
 
 
@@ -482,3 +487,113 @@ class CreateOrUpdateTrees(APIView):
         return Response(
             json.dumps({"details": "Error Occured"}), status=status.HTTP_400_BAD_REQUEST
         )
+
+
+class PersonView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        queryset = Person.objects.all()
+        try:
+            if "name" in request.query_params:
+                queryset = Person.objects.filter(name=request.query_params["name"])
+            serializer = PersonSerializer(queryset, many=True)
+            if "id" in request.query_params:
+                queryset = Person.objects.get(id=request.query_params["id"])
+                serializer = PersonSerializer(queryset)
+        except Exception:
+            return Response(json.dumps({"details": "Bad Query"}), status=400)
+
+        return Response(json.dumps(serializer.data))
+
+    def post(self, request):
+        serializer_data = PersonSerializer(data=request.data)
+        if serializer_data.is_valid():
+            serializer_data.save()
+            return Response(json.dumps(serializer_data.data))
+        return Response(json.dumps({"details": "error occurred"}), status=400)
+
+
+class RelationsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        queryset = Relation.objects.all()
+        try:
+            if "name" in request.query_params:
+                queryset = Relation.objects.get(name=request.query_params["name"])
+            serializer = RelationSerializer(queryset)
+            if "id" in request.query_params:
+                queryset = Relation.objects.get(id=request.query_params["id"])
+                serializer = RelationSerializer(queryset)
+        except Exception:
+            return Response(json.dumps({"details": "Bad Query"}), status=400)
+
+        return Response(json.dumps(serializer.data))
+
+    def post(self, request):
+        serializer_data = RelationSerializer(data=request.data)
+        if serializer_data.is_valid():
+            serializer_data.save()
+            return Response(json.dumps(serializer_data.data))
+        return Response(json.dumps({"details": "error occurred"}), status=400)
+
+
+class RelationCalculatorView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        queryset = RelationCalc.objects.all()
+        try:
+            if "first_person" in request.query_params:
+                queryset = queryset.filter(
+                    first_person=request.query_params["first_person"]
+                )
+            if "second_person" in request.query_params:
+                queryset = queryset.filter(
+                    second_person=request.query_params["second_person"]
+                )
+            if "result" in request.query_params:
+                queryset = queryset.filter(result=request.query_params["result"])
+            serializer = RelationCalculatorSerializer(queryset, many=True)
+            if "id" in request.query_params:
+                queryset = queryset.get(id=request.query_params["id"])
+                serializer = RelationCalculatorSerializer(queryset)
+        except Exception:
+            return Response(json.dumps({"details": "Bad Query"}), status=400)
+
+        return Response(json.dumps(serializer.data))
+
+    def post(self, request):
+        serializer_data = RelationCalculatorSerializer(data=request.data)
+        if serializer_data.is_valid():
+            serializer_data.save()
+            return Response(json.dumps(serializer_data.data))
+        return Response(json.dumps({"details": "error occurred"}), status=400)
+
+
+class ClanPersonRelationView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        if not "clan" in request.query_params:
+            return Response(json.dumps({"details": "Must specify Clan"}), status=400)
+        queryset = ClanPersonRelation.objects.all().filter(clan=request.data["clan"])
+        try:
+            serializer = RelationSerializer(queryset)
+            if "id" in request.query_params:
+                queryset = ClanPersonRelation.objects.get(id=request.query_params["id"])
+                serializer = RelationSerializer(queryset)
+        except Exception:
+            return Response(json.dumps({"details": "Bad Query"}), status=400)
+
+        return Response(json.dumps(serializer.data))
+
+    def post(self, request):
+        serializer_data = ClanPersonRelationSerializer(data=request.data)
+        if serializer_data.is_valid():
+            serializer_data.save()
+            return Response(json.dumps(serializer_data.data))
+        return Response(json.dumps({"details": "error occurred"}), status=400)
+

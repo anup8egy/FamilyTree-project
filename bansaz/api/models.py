@@ -369,7 +369,7 @@ class Profile(models.Model):
 
 
 class Clan(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
     date_created = models.DateField(auto_now=True)
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="owner_clans"
@@ -391,13 +391,14 @@ class Clan(models.Model):
     def tree_type(self):
         return "Family_clan"
 
+
 class Staffmap(models.Model):
     name = models.CharField(max_length=30)
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="owner_staffmaps"
     )
     date_created = models.DateField(auto_now=True)
-    admins = models.ManyToManyField(User, related_name="admin_staffmaps",  blank=True)
+    admins = models.ManyToManyField(User, related_name="admin_staffmaps", blank=True)
     description = models.TextField()
     VIEWER_GROUP = [
         ("Admins", "Admins"),
@@ -410,10 +411,10 @@ class Staffmap(models.Model):
     def __str__(self):
         return self.name
 
-
     @property
     def tree_type(self):
         return "Staffmap"
+
 
 class Person(models.Model):
     name = models.CharField(max_length=30)
@@ -466,4 +467,7 @@ class RelationCalc(models.Model):
         return "{}'s {} is {}".format(
             self.first_relation, self.second_relation, self.result_relation
         )
+
+    class Meta:
+        unique_together = ("first_relation", "second_relation")
 

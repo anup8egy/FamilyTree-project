@@ -1,7 +1,15 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
-from .models import Profile, Clan, Staffmap, Person
+from .models import (
+    Profile,
+    Clan,
+    Staffmap,
+    Person,
+    Relation,
+    RelationCalc,
+    ClanPersonRelation,
+)
 from rest_framework.relations import RelatedField
 from django.utils.translation import gettext_lazy as _
 
@@ -189,12 +197,60 @@ class StaffMapSerializer(serializers.ModelSerializer):
         }
 
 
+class NameRelatedField(RelatedField):
+    default_error_messages = {
+        "required": _("This field is required."),
+        "does_not_exist": _(
+            'Invalid username "{username_value}" - object does not exist.'
+        ),
+        "incorrect_type": _("Incorrect type. Expected pk value, received {data_type}."),
+    }
+
+    def to_internal_value(self, data):
+        data = str(data)
+        try:
+            return self.get_queryset().get(name=data)
+        except ObjectDoesNotExist:
+            self.fail("does_not_exist", username_value=data)
+        except (TypeError, ValueError):
+            self.fail("incorrect_type", data_type=type(data).__name__)
+
+    def to_representation(self, value):
+        return str(value.name)
+
+
 class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Person
         fields = "__all__"
         read_only_fields = ["id"]
-        extra_kwargs = {
-            "name": {"required": False},
-            "gender": {"required": False},
-        }
+
+
+class RelationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Relation
+        fields = "__all__"
+        read_only_fields = ["id"]
+
+
+class RelationCalculatorSerializer(serializers.ModelSerializer):
+    first_relation = NameRelatedField(queryset=Relation.objects.all())
+    second_relation = NameRelatedField(queryset=Relation.objects.all())
+    result_relation = NameRelatedField(queryset=Relation.objects.all())
+
+    class Meta:
+        model = RelationCalc
+        fields = "__all__"
+        read_only_fields = ["id"]
+
+
+class ClanPersonRelationSerializer(serializers.ModelSerializer):
+    clan = NameRelatedField(queryset=Clan.objects.all())
+    first_person = NameRelatedField(queryset=Person.objects.all())
+    relation = NameRelatedField(queryset=Relation.objects.all())
+    second_person = NameRelatedField(queryset=Person.objects.all())
+
+    class Meta:
+        model = ClanPersonRelation
+        fields = "__all__"
+        read_only_fields = ["id"]
